@@ -4,5 +4,5 @@ The most of contained class share a certain focus on embedded systems.
 
 # Contents
 
-# Dependencies:
+# Dependencies
 - [googletest](https://github.com/google/googletest) (unittests) 
