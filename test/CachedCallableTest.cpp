@@ -15,6 +15,9 @@
  */
 
 #include <gtest/gtest.h>
+#include <array>
+#include <thread>
+#include <mutex>
 #include <CachedCallable.hpp>
 
 using simons_lib::cached_callable::CachedCallable;
@@ -77,4 +80,37 @@ TEST(CachedCallableTest, reset)
     // Clear cache, next evaluation has to deliver a different result
     testObj.reset();
     ASSERT_EQ(++expected, testObj());
+}
+
+TEST(CachedCallableTest, synchronized)
+{
+    auto expected = 10;
+    auto func = [] ()
+    {
+        static auto execCnt = 0;
+        return (++execCnt);
+    };
+    auto testObj = CachedCallable<decltype(expected), std::mutex>(func);
+
+    // Spawn 10 threads to reset and call the TestObject.
+    // As a result: The counter should have reached 10
+    auto threadfunc = [&testObj] ()
+    {
+        testObj.reset();
+        testObj();
+    };
+
+    auto threads = std::array<std::thread, 10>();
+
+    for (auto& handle : threads)
+    {
+        handle = std::thread(threadfunc);
+    }
+
+    for (auto& handle : threads)
+    {
+        handle.join();
+    }
+
+    ASSERT_EQ(expected, testObj());
 }

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['operator_28_29',['operator()',['../classsimons__lib_1_1cached__callable_1_1CachedCallable.html#ad9cd40eb3866682ef73dec0357fffabe',1,'simons_lib::cached_callable::CachedCallable']]]
+  ['dummymutex',['DummyMutex',['../classsimons__lib_1_1lock_1_1DummyMutex.html',1,'simons_lib::lock']]],
+  ['dummymutex_2ehpp',['DummyMutex.hpp',['../DummyMutex_8hpp.html',1,'']]]
 ];

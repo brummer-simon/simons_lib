@@ -17,6 +17,8 @@ LDFLAGS = \
 
 TEST_SRC = \
 	test/main.cpp \
+	test/LockGuardTest.cpp \
+	test/DummyMutexTest.cpp \
 	test/CachedCallableTest.cpp \
 
 TEST_BIN = test/test_bin.out

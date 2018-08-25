@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['operator_28_29',['operator()',['../classsimons__lib_1_1cached__callable_1_1CachedCallable.html#ad9cd40eb3866682ef73dec0357fffabe',1,'simons_lib::cached_callable::CachedCallable']]]
+  ['lock',['lock',['../classsimons__lib_1_1lock_1_1DummyMutex.html#abfbe902e091943a785a784db00631d5c',1,'simons_lib::lock::DummyMutex']]],
+  ['lockguard',['LockGuard',['../classsimons__lib_1_1lock_1_1LockGuard.html#a88e38852e75d999ad401e80552b2fc43',1,'simons_lib::lock::LockGuard']]]
 ];
