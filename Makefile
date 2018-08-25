@@ -1,20 +1,38 @@
-CC = g++
+
+# Test config section
+CC = clang++
 
 CPPFLAGS = \
 	-std=c++17 \
 	-g \
 	-Iinclude \
+	-Wall \
+	-Wextra \
+	-Wpedantic \
+	-Werror \
 
 LDFLAGS = \
 	-lpthread \
 	-lgtest \
 
 TEST_SRC = \
-	tests/main.cpp \
-	tests/CachedCallableTest.cpp \
+	test/main.cpp \
+	test/CachedCallableTest.cpp \
 
-TEST_BIN = tests/test_bin.out
+TEST_BIN = test/test_bin.out
+
+# Documentation config section
+CLEAN_DOC = rm -rf doc/html
+MAKE_DOC  = doxygen doc/doxygen_cfg
+
+# Targets
+.PHONY: test doc all
 
 test:
 	$(CC) $(CPPFLAGS) $(LDFLAGS) $(TEST_SRC) -o $(TEST_BIN)
 	$(TEST_BIN)
+
+doc:
+	$(CLEAN_DOC)
+	$(MAKE_DOC)
+

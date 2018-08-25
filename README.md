@@ -3,7 +3,8 @@ Small collection useful C++ classes (header only implementations) I wrote over t
 Most class share a certain focus on embedded systems.
 
 # Contents
-- CachedCallable: A simple cache for computation results of anything that implements operator ().
+- CachedCallable: A simple cache for computation results of callable object.
 
-# Dependencies
-- [googletest](https://github.com/google/googletest) (unittests) 
+# Optional Dependencies
+- [googletest](https://github.com/google/googletest) (unittests)
+- [doxygen](www.doxygen.org) (documentation)
