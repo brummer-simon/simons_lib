@@ -20,6 +20,7 @@ TEST_SRC = \
 	test/LockGuardTest.cpp \
 	test/DummyMutexTest.cpp \
 	test/CachedCallableTest.cpp \
+	test/RandomNumberGeneratorTest.cpp \
 
 TEST_BIN = test/test_bin.out
 

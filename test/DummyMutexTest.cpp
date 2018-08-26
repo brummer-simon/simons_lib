@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright (C) 2018 Simon Brummer <simon.brummer@posteo.de>
  *
  * This library is free software; you can redistribute it and/or
@@ -26,16 +26,16 @@ using simons_lib::lock::DummyMutex;
  */
 TEST(DummyMutexTest, use_with_lock_guard)
 {
-   auto mtx  = DummyMutex();
-   auto lock = std::lock_guard<decltype(mtx)>(mtx);
+    auto mtx  = DummyMutex();
+    auto lock = std::lock_guard<decltype(mtx)>(mtx);
 }
 
 TEST(DummyMutexTest, use_with_lock)
 {
-   auto mtx  = DummyMutex();
-   auto lock = std::unique_lock<decltype(mtx)>(mtx);
+    auto mtx  = DummyMutex();
+    auto lock = std::unique_lock<decltype(mtx)>(mtx);
 
-   lock.unlock();
-   lock.lock();
-   lock.unlock();
+    lock.unlock();
+    lock.lock();
+    lock.unlock();
 }
