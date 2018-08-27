@@ -1,6 +1,6 @@
 
 # Test config section
-CC = clang++
+CC = g++
 
 CPPFLAGS = \
 	-std=c++17 \
