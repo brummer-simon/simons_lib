@@ -7,6 +7,7 @@ Most class share a certain focus on embedded systems.
 - RandomNumberGenerator: Small wrapper used to combine a random engine and a distribution into a single object. Threadsafety is configurable.
 - LockGuard: Simple reimplementation of std::lock_guard.
 - DummyMutex: Mutex dummy to use where no threadsafety is required. 
+- Math: Several math related functions.
 
 # Optional Dependencies
 - [googletest](https://github.com/google/googletest) (unittests)

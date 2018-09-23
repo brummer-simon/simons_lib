@@ -31,3 +31,4 @@ TEST(MathTest, isPowOfTwo)
         ASSERT_EQ(false, simons_lib::math::isPowOfTwo(std::uint64_t(5ll << i)));
     }
 }
+

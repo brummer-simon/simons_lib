@@ -54,3 +54,4 @@ constexpr bool isPowOfTwo(intType i)
 } // namespace simons_lib::math
 
 #endif // UTILITY_FUNCTIONS_IMPL_HPP_20180923091648
+

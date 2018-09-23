@@ -26,3 +26,4 @@
 #include "Math/UtilityFunctionsImpl.hpp"
 
 #endif // MATH_HPP_20180923091200
+
