@@ -20,8 +20,8 @@
  * See the file LICENSE in the top level directory for more details.
  */
 
-#ifndef RANDOM_NUMBER_GENERATOR_IMPL_HPP
-#define RANDOM_NUMBER_GENERATOR_IMPL_HPP
+#ifndef RANDOM_NUMBER_GENERATOR_IMPL_HPP_20180923091648
+#define RANDOM_NUMBER_GENERATOR_IMPL_HPP_20180923091648
 
 #include <random>
 #include "../LockGuard.hpp"
@@ -96,4 +96,4 @@ private:
 
 } // namespace simons_lib::random_number_generator
 
-#endif // RANDOM_NUMBER_GENERATOR_IMPL_HPP
+#endif // RANDOM_NUMBER_GENERATOR_IMPL_HPP_20180923091648

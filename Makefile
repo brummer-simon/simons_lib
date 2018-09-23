@@ -21,6 +21,7 @@ TEST_SRC = \
 	test/DummyMutexTest.cpp \
 	test/CachedCallableTest.cpp \
 	test/RandomNumberGeneratorTest.cpp \
+	test/MathTest.cpp \
 
 TEST_BIN = test/test_bin.out
 

@@ -1,0 +1,25 @@
+{
+    "folders":
+    [
+        {
+            "path": "..",
+            "follow_symlinks": true
+        }
+    ],
+    "settings":
+    {
+        "tab_size": 4,
+        "draw_white_space": "all",
+    },
+    "build_systems":
+    [
+        {
+            "name": "simons_lib: make test",
+            "shell_cmd": "make -C .. test"
+        },
+        {
+            "name": "simons_lib: make doc",
+            "shell_cmd": "make -C .. doc"
+        }
+    ]
+}

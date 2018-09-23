@@ -20,9 +20,9 @@
  * See the file LICENSE in the top level directory for more details.
  */
 
-#ifndef RANDOM_NUMBER_GENERATOR_HPP
-#define RANDOM_NUMBER_GENERATOR_HPP
+#ifndef RANDOM_NUMBER_GENERATOR_HPP_20180923091648
+#define RANDOM_NUMBER_GENERATOR_HPP_20180923091648
 
 #include "RandomNumberGenerator/RandomNumberGeneratorImpl.hpp"
 
-#endif // RANDOM_NUMBER_GENERATOR_HPP
+#endif // RANDOM_NUMBER_GENERATOR_HPP_20180923091648
