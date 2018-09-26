@@ -6,20 +6,33 @@
             "follow_symlinks": true
         }
     ],
+
     "settings":
     {
-        "tab_size": 4,
+        "default_encoding": "UTF-8",
+        "default_line_ending": "unix",
+        "spell_check": true,
+        "show_encoding": true,
+        "show_line_endings": true,
         "draw_white_space": "all",
+        "translate_tabs_to_spaces": true,
+        "ensure_newline_at_eof_on_save": true,
+        "trim_trailing_white_space_on_save": true,
+        "highlight_line": true,
+        "tab_size": 4,
     },
+
     "build_systems":
     [
         {
             "name": "simons_lib: make test",
-            "shell_cmd": "make -C .. test"
+            "working_dir": "${project_path}/..",
+            "shell_cmd": "make test"
         },
         {
             "name": "simons_lib: make doc",
-            "shell_cmd": "make -C .. doc"
+            "working_dir": "${project_path}/..",
+            "shell_cmd": "make doc"
         }
     ]
 }
