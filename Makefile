@@ -22,6 +22,7 @@ TEST_SRC = \
 	test/CachedCallableTest.cpp \
 	test/RandomNumberGeneratorTest.cpp \
 	test/MathTest.cpp \
+	test/ResultTest.cpp \
 
 TEST_BIN = test/test_bin.out
 
