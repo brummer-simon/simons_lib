@@ -48,14 +48,14 @@ namespace simons_lib::math
 
 /**
  * @brief Test if given integer is a power of two.
- * @tparam    intType   Type of @p i. Must be an unsigned integer.
- * @param[in] i         The value to test.
+ * @tparam    T   Type of @p i. Must be an unsigned integer.
+ * @param[in] i   The value to test.
  * @returns   true if @p i as a power of two, otherwise false.
  */
-template<typename intType>
-constexpr bool isPowOfTwo(intType i)
+template<typename T>
+constexpr bool isPowOfTwo(T i)
 {
-    static_assert(std::is_unsigned<intType>::value, "Type has to be an unsigned integer");
+    static_assert(std::is_unsigned<T>::value, "Type has to be an unsigned integer");
 
     auto bitCnt = 0;
     while (i)
