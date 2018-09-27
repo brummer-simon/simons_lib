@@ -49,20 +49,20 @@ namespace simons_lib::lock
  * @note This RAII lock guard is used throughout simons_lib
  *       with the intension, that the mutex header doesn't have to be included
  *       in cases where no thread safety is required.
- * @tparam Mutex   the mutex type to lock. Must implement at least BasicLockable.
+ * @tparam M   The mutex type to lock. Must implement at least BasicLockable.
  */
-template<typename Mutex>
+template<typename M>
 class LockGuard
 {
 public:
     /// @brief Type of internally used mutex.
-    using mutex_type = Mutex;
+    using MutexType = M;
 
     /**
      * @brief Constructor.
      * @param[in] mutex   Mutex that should be used by the LockGuard
      */
-    LockGuard(mutex_type& mutex) noexcept
+    LockGuard(MutexType& mutex) noexcept
         : m_mutex(mutex)
     {
         m_mutex.lock();
@@ -80,7 +80,7 @@ public:
     LockGuard& operator = (LockGuard&&) = delete;
 
 private:
-    mutex_type& m_mutex;
+    MutexType& m_mutex;
 };
 
 } // namespace simons_lib::lock

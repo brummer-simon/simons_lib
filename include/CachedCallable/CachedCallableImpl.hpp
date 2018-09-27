@@ -54,23 +54,26 @@ using simons_lib::lock::LockGuard;
 
 /**
  * @brief Simple cache for results returned by callable objects.
- * @tparam result_type   The cached result type.
- * @tparam mutex_type    Internally used mutex type (defaults to
- *                       DummyMutex). If thread safety is required
- *                       supply a mutex of your choice.
+ * @tparam T   The cached result type.
+ * @tparam M   Internally used mutex type (defaults to DummyMutex).
+ *             If thread safety is required supply a mutex of your choice.
  */
-template<typename result_type, typename mutex_type = DummyMutex>
+template<typename T, typename M = DummyMutex>
 class CachedCallable
 {
 public:
+    /// @brief Type the stored callable return value.
+    using ResultType = T;
+    /// @brief Type of supplied mutex.
+    using MutexType = M;
     /// @brief Type of stored callable object.
-    using callable_type = std::function<result_type(void)>;
+    using CallableType = std::function<ResultType(void)>;
 
     /**
      * @brief Constructor.
      * @param[in] callable   Callable object those results should be cached.
      */
-    CachedCallable(callable_type callable) noexcept
+    CachedCallable(CallableType callable) noexcept
         : m_callable(callable)
         , m_result()
         , m_mutex()
@@ -83,9 +86,9 @@ public:
      *       callable is executed first and its result is stored.
      * @returns A copy of the cached result.
      */
-    result_type operator ()(void)
+    ResultType operator ()(void)
     {
-        auto guard = LockGuard<mutex_type>(m_mutex);
+        auto guard = LockGuard<MutexType>(m_mutex);
         if (!m_result)
         {
             m_result = m_callable();
@@ -100,14 +103,14 @@ public:
      */
     void reset(void)
     {
-        auto guard = LockGuard<mutex_type>(m_mutex);
+        auto guard = LockGuard<MutexType>(m_mutex);
         m_result.reset();
     }
 
 private:
-    callable_type              m_callable;
-    std::optional<result_type> m_result;
-    mutex_type                 m_mutex;
+    CallableType              m_callable;
+    std::optional<ResultType> m_result;
+    MutexType                 m_mutex;
 };
 
 } // namespace simons_lib::cached_callable
