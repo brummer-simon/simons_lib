@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['mutex_5ftype',['mutex_type',['../classsimons__lib_1_1lock_1_1LockGuard.html#ae01ec7d22592024edc67974129128287',1,'simons_lib::lock::LockGuard']]]
+  ['distributiontype',['DistributionType',['../classsimons__lib_1_1random__number__generator_1_1RandomNumberGenerator.html#ae411956bb7f150d55c7f15d58149d26d',1,'simons_lib::random_number_generator::RandomNumberGenerator']]]
 ];

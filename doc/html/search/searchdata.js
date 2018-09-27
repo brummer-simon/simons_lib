@@ -1,27 +1,30 @@
 var indexSectionsWithContent =
 {
-  0: "cdilmorstu",
+  0: "cdeilmorstu",
   1: "cdlr",
-  2: "cdlmru",
-  3: "cilorstu",
-  4: "cmrs"
+  2: "s",
+  3: "cdlmru",
+  4: "cilorstu",
+  5: "cdemrs"
 };
 
 var indexSectionNames =
 {
   0: "all",
   1: "classes",
-  2: "files",
-  3: "functions",
-  4: "typedefs"
+  2: "namespaces",
+  3: "files",
+  4: "functions",
+  5: "typedefs"
 };
 
 var indexSectionLabels =
 {
   0: "All",
   1: "Classes",
-  2: "Files",
-  3: "Functions",
-  4: "Typedefs"
+  2: "Namespaces",
+  3: "Files",
+  4: "Functions",
+  5: "Typedefs"
 };
 

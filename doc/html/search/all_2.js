@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ispowoftwo',['isPowOfTwo',['../UtilityFunctionsImpl_8hpp.html#a3cba90c0ee351795c2ee1f0686f3e6d2',1,'simons_lib::math']]]
+  ['enginetype',['EngineType',['../classsimons__lib_1_1random__number__generator_1_1RandomNumberGenerator.html#a691a61903623adf6970b516442987357',1,'simons_lib::random_number_generator::RandomNumberGenerator']]]
 ];

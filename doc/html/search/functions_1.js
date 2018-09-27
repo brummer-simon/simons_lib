@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ispowoftwo',['isPowOfTwo',['../UtilityFunctionsImpl_8hpp.html#a3cba90c0ee351795c2ee1f0686f3e6d2',1,'simons_lib::math']]]
+  ['ispowoftwo',['isPowOfTwo',['../namespacesimons__lib_1_1math.html#a36ed4370fa7195bbdc17665dcf52c361',1,'simons_lib::math']]]
 ];
