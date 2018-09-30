@@ -6,7 +6,7 @@
  *            This project is released under the BSD 3-Clause License.
  */
 
-/**
+/*
  * BSD 3-Clause License
  *
  * Copyright (c) 2018, Simon Brummer
