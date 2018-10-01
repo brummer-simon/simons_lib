@@ -5,11 +5,12 @@ disabled (none are thrown) and some behavior can be configured via defines (e.g.
 stay in a loop in case of hard faults instead of exiting to a OS).
 
 # Contents
-- CachedCallable: A cache for computation results of callable object. Threadsafety is configurable.
+- CachedCallable: A cache for computation results of callable object. Thread safety is configurable.
 - RandomNumberGenerator: Small wrapper used to combine a random engine and a distribution into a single object. Threadsafety is configurable.
 - LockGuard: Simple reimplementation of std::lock_guard.
 - NullTypes: Dummy implementations that can act as template parameters (NullObj, NullMutex).
 - Result: Alternative to exception based error handling. Heavily inspired by Rusts "Result" type.
+- Ringbuffer: Generic fixed-size Ringbuffer. Thread safety is configurable.
 - Math: Several math related functions.
 
 # Optional Dependencies
