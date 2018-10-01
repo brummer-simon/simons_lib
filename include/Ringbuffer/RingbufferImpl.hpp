@@ -42,6 +42,7 @@
 #define RINGBUFFER_IMPL_HPP_20181001091421
 
 #include <array>
+#include <optional>
 #include "../LockGuard.hpp"
 #include "../DummyMutex.hpp"
 
@@ -52,14 +53,58 @@ template<typename T, std::size_t S, typename M = simons_lib::lock::DummyMutex>
 class Ringbuffer
 {
 public:
+    /// @brief Type contained in Ringbuffer.
+    using ValueType = T;
+    /// @brief Ref to type contained in Ringbuffer.
+    using Reference = ValueType &;
+    /// @brief Const ref to type contained in Ringbuffer.
+    using ConstReference = ValueType const&;
+    /// @brief Type used to express the Ringbuffer sizes.
+    using SizeType = decltype(S);
     /// @brief Type of supplied mutex.
     using MutexType = M;
     /// @brief Lock to use with given mutex.
     using LockType = simons_lib::lock::LockGuard<MutexType>;
 
+    std::optional<T> front() const
+    {
+        return std::nullopt
+    }
+
+    std::optional<T> back() const
+    {
+        return std::nullopt
+    }
+
+    bool empty() const
+    {
+        return false;
+    }
+
+    SizeType size() const
+    {
+        return 0;
+    }
+
+    void push()
+    {
+    }
+
+    void pop()
+    {
+    }
+
+    void emplace()
+    {
+    }
+
+    void swap()
+    {
+    }
+
 private:
-    std::array<T, S> m_rawBuf;
-    MutexType        m_mutex;
+    std::array<T, S>  m_rawBuf;
+    mutable MutexType m_mutex;
 };
 
 template<typename T, std::size_t S>
