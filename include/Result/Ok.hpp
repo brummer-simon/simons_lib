@@ -41,6 +41,9 @@
 #ifndef OK_HPP_20180923151521
 #define OK_HPP_20180923151521
 
+#include <type_traits>
+#include "../NullTypes/NullObjImpl.hpp"
+
 namespace simons_lib::result
 {
 
@@ -48,7 +51,7 @@ namespace simons_lib::result
  * @brief Type holding a successful result.
  * @tparam T   Type contained within the successful result.
  */
-template<typename T>
+template<typename T = simons_lib::null_types::NullObj>
 class Ok
 {
 public:
@@ -60,19 +63,35 @@ public:
     using ConstReference = ValueType const&;
 
     /**
+     * @brief Construct successful Result with default value type.
+     * @note Given T must be no-throw default constructible.
+     */
+    explicit Ok(void) noexcept
+        : m_value()
+    {
+        static_assert( std::is_nothrow_default_constructible<ValueType>::value
+                     , "Ok<T>: T must be nothrow_default_constructible."
+                     );
+    }
+
+    /**
      * @brief Constructs a successful Result.
+     * @note Type of @p value must be no-throw move constructible.
      * @param[in] value   Value contained within the successful result.
      */
-    explicit Ok(ValueType value)
+    explicit Ok(ValueType value) noexcept
         : m_value(std::move(value))
     {
+        static_assert( std::is_nothrow_move_constructible<ValueType>::value
+                     , "Ok<T>: T must be nothrow_move_constructible."
+                     );
     }
 
     /**
      * @brief Get contained value.
      * @returns Copy of contained value.
      */
-    ValueType getValue() const
+    ValueType getValue() const noexcept
     {
         return m_value;
     }
@@ -81,7 +100,7 @@ public:
      * @brief Get const reference to contained value.
      * @returns Const reference to contained value.
      */
-    ConstReference getConstRef() const
+    ConstReference getConstRef() const noexcept
     {
         return m_value;
     }
@@ -90,7 +109,7 @@ public:
      * @brief Get reference to contained value.
      * @returns Reference to contained value.
      */
-    Reference getRef()
+    Reference getRef() noexcept
     {
         return m_value;
     }

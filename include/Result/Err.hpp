@@ -41,6 +41,8 @@
 #ifndef ERR_HPP_20180923151521
 #define ERR_HPP_20180923151521
 
+#include "../NullTypes/NullObjImpl.hpp"
+
 namespace simons_lib::result
 {
 
@@ -48,7 +50,7 @@ namespace simons_lib::result
  * @brief Type holding a failed result.
  * @tparam E   Type contained within the failed result.
  */
-template<typename E>
+template<typename E = simons_lib::null_types::NullObj>
 class Err
 {
 public:
@@ -60,19 +62,35 @@ public:
     using ConstReference = ValueType const&;
 
     /**
+     * @brief Construct failed Result with default value type.
+     * @note Given T must be no-throw default constructible.
+     */
+    explicit Err(void) noexcept
+        : m_value()
+    {
+        static_assert( std::is_nothrow_default_constructible<ValueType>::value
+                     , "Err<E>: E must be nothrow_default_constructible."
+                     );
+    }
+
+    /**
      * @brief Constructs a failed Result.
+     * @note Type of @p value must be no-throw move constructible.
      * @param[in] value   Error value contained within the failed result.
      */
-    explicit Err(ValueType value)
+    explicit Err(ValueType value) noexcept
         : m_value(std::move(value))
     {
+        static_assert( std::is_nothrow_move_constructible<ValueType>::value
+                     , "Err<E>: E must be nothrow_move_constructible."
+                     );
     }
 
     /**
      * @brief Get contained value.
      * @returns Copy of contained value.
      */
-    ValueType getValue() const
+    ValueType getValue() const noexcept
     {
         return m_value;
     }
@@ -81,7 +99,7 @@ public:
      * @brief Get const reference to contained value.
      * @returns Const reference to contained value.
      */
-    ConstReference getConstRef() const
+    ConstReference getConstRef() const noexcept
     {
         return m_value;
     }
@@ -90,7 +108,7 @@ public:
      * @brief Get reference to contained value.
      * @returns Reference to contained value.
      */
-    Reference getRef()
+    Reference getRef() noexcept
     {
         return m_value;
     }

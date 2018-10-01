@@ -32,13 +32,17 @@
 
 #include <gtest/gtest.h>
 #include <Result.hpp>
+#include <NullTypes/NullObjImpl.hpp>
 
 using namespace simons_lib::result;
+using simons_lib::null_types::NullObj;
 
 // Tests for results success type
 TEST(OkTest, behavior)
 {
     // Construct Ok with different types and values. Compare results.
+    ASSERT_EQ(Ok<>(),                  Ok<>());
+    ASSERT_EQ(Ok<NullObj>(NullObj()),  Ok<NullObj>(NullObj()));
     ASSERT_EQ(Ok<int>(-1),             Ok<int>(-1));
     ASSERT_EQ(Ok<unsigned>(1),         Ok<unsigned>(1));
     ASSERT_EQ(Ok<char>('A'),           Ok<char>('A'));
@@ -65,6 +69,8 @@ TEST(OkTest, behavior)
 TEST(ErrTest, behavior)
 {
     // Construct Err with different types and values. Compare results.
+    ASSERT_EQ(Err<>(),                  Err<>());
+    ASSERT_EQ(Err<NullObj>(NullObj()),  Err<NullObj>(NullObj()));
     ASSERT_EQ(Err<int>(-1),             Err<int>(-1));
     ASSERT_EQ(Err<unsigned>(1),         Err<unsigned>(1));
     ASSERT_EQ(Err<char>('A'),           Err<char>('A'));
