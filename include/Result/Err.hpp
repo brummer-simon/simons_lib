@@ -57,7 +57,7 @@ public:
     using ValueType = E;
     /// @brief Ref to type contained in a failed result.
     using Reference = ValueType &;
-        /// @brief Const ref to type contained in a failed result.
+    /// @brief Const ref to type contained in a failed result.
     using ConstReference = ValueType const&;
 
     /**

@@ -1,8 +1,8 @@
 /**
- * @file      Version.hpp
+ * @file      StackError.hpp
  * @author    Simon Brummer (<simon.brummer@posteo.de>)
- * @brief     Version information.
- * @copyright 2018 Simon Brummer. All rights reserved.
+ * @brief     Error Codes used in Stack
+ * @copyright 2018 Simon Brummer. All rights reserved.\n
  *            This project is released under the BSD 3-Clause License.
  */
 
@@ -38,23 +38,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VERSION_HPP_20190111084821
-#define VERSION_HPP_20190111084821
+#ifndef STACKERROR_HPP_20190122091021
+#define STACKERROR_HPP_20190122091021
 
-namespace simons_lib
+namespace simons_lib::stack
 {
 
-/**
- * @brief Version information.
- */
-struct Version
-{
-    static constexpr char const * const major = "0";     ///< Major Version number.
-    static constexpr char const * const minor = "2";     ///< Minor Version number.
-    static constexpr char const * const rev   = "0";     ///< Revision number.
-    static constexpr char const * const full  = "0.2.0"; ///< Full version number.
+/// @brief Error Codes used by Stack.
+enum class StackError
+{ IsFull  = 1 /// @brief Indicates that the Stack is full.
+, IsEmpty = 2 /// @brief Indicates that the Stack is empty.
 };
 
-} // namespace simons_lib
+} // namespace simons_lib::stack
 
-#endif // VERSION_HPP_20190111084821
+#endif// STACKERROR_HPP_20190122091021
