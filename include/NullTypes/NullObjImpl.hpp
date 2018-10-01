@@ -1,8 +1,8 @@
 /**
- * @file      DummyMutex.hpp
+ * @file      NullObjImpl.hpp
  * @author    Simon Brummer (<simon.brummer@posteo.de>)
- * @brief     Dummy implementation of the std::mutex interface. Meta-header.
- * @copyright 2018 Simon Brummer. All rights reserved.
+ * @brief     Dummy Type
+ * @copyright 2018 Simon Brummer. All rights reserved.\n
  *            This project is released under the BSD 3-Clause License.
  */
 
@@ -38,9 +38,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DUMMY_MUTEX_HPP_20180825084201
-#define DUMMY_MUTEX_HPP_20180825084201
+#ifndef NULL_OBJ_IMPL_HPP_20180825084201
+#define NULL_OBJ_IMPL_HPP_20180825084201
 
-#include "DummyMutex/DummyMutexImpl.hpp"
+namespace simons_lib::null_types
+{
 
-#endif // DUMMY_MUTEX_HPP_20180825084201
+/**
+ * @brief Object containing nothing.
+ */
+struct NullObj
+{
+};
+
+/**
+ * @brief Compares NullObj for equality.
+ * @returns true.
+ */
+inline constexpr bool operator == (NullObj const&, NullObj const&)
+{
+    return true;
+}
+
+/**
+ * @brief Compares NullObj for inequality.
+ * @returns false.
+ */
+inline constexpr bool operator != (NullObj const&, NullObj const&)
+{
+    return false;
+}
+
+} // namespace simons_lib::null_types
+
+#endif // NULL_OBJ_IMPL_HPP_20180825084201

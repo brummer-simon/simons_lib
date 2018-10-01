@@ -1,3 +1,11 @@
+/**
+ * @file      NullMutexImpl.hpp
+ * @author    Simon Brummer (<simon.brummer@posteo.de>)
+ * @brief     Dummy implementation of the std::mutex interface.
+ * @copyright 2018 Simon Brummer. All rights reserved.\n
+ *            This project is released under the BSD 3-Clause License.
+ */
+
 /*
  * BSD 3-Clause License
  *
@@ -30,48 +38,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <LockGuard.hpp>
-#include <NullTypes.hpp>
-#include <mutex>
+#ifndef NULL_MUTEX_IMPL_HPP_20180825084201
+#define NULL_MUTEX_IMPL_HPP_20180825084201
 
-using simons_lib::lock::LockGuard;
-using simons_lib::null_types::NullMutex;
-
-TEST(LockGuardTest, behavior)
+namespace simons_lib::null_types
 {
-    auto expected = 2;
-    struct TestBasicLocable
+
+/**
+ * @brief Dummy implementation of the std::mutex interface.
+ * @note This class is intended to be optimized out, in cases
+ *       where thread safety is not required.
+ */
+class NullMutex
+{
+public:
+    /**
+     * @brief locks null mutex. Does nothing.
+     */
+    void lock(void) const noexcept
     {
-        int cnt = 0;
-
-        void lock(void)
-        {
-            ++cnt;
-        };
-
-        void unlock(void)
-        {
-            ++cnt;
-        };
-    };
-
-    auto lock = TestBasicLocable();
-    {
-        auto guard = LockGuard<decltype(lock)>(lock);
     }
 
-    ASSERT_EQ(expected, lock.cnt);
-}
+    /**
+     * @brief try_locks null mutex. Does nothing.
+     * @returns always true;
+     */
+    bool try_lock(void) const noexcept
+    {
+        return true;
+    }
 
-TEST(LockGuardTest, guard_with_std_mutex)
-{
-    auto lock = std::mutex();
-    auto guard = LockGuard<decltype(lock)>(lock);
-}
+    /**
+     * @brief unlocks null mutex. Does nothing.
+     */
+    void unlock(void) const noexcept
+    {
+    }
+};
 
-TEST(LockGuardTest, guard_width_dummy_mutex)
-{
-    auto lock = NullMutex();
-    auto guard = LockGuard<decltype(lock)>(lock);
-}
+} // namespace simons_lib::null_types
+
+#endif // NULL_MUTEX_IMPL_HPP_20180825084201

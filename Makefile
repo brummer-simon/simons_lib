@@ -18,7 +18,7 @@ LDFLAGS = \
 TEST_SRC = \
 	test/main.cpp \
 	test/LockGuardTest.cpp \
-	test/DummyMutexTest.cpp \
+	test/NullTypesTest.cpp \
 	test/CachedCallableTest.cpp \
 	test/RandomNumberGeneratorTest.cpp \
 	test/MathTest.cpp \

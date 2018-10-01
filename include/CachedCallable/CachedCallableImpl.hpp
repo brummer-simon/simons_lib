@@ -44,21 +44,21 @@
 #include <functional>
 #include <optional>
 #include "../LockGuard.hpp"
-#include "../DummyMutex.hpp"
+#include "../NullTypes.hpp"
 
 namespace simons_lib::cached_callable
 {
 
-using simons_lib::lock::DummyMutex;
+using simons_lib::null_types::NullMutex;
 using simons_lib::lock::LockGuard;
 
 /**
  * @brief Simple cache for results returned by callable objects.
  * @tparam T   The cached result type.
- * @tparam M   Internally used mutex type (defaults to DummyMutex).
+ * @tparam M   Internally used mutex type (defaults to NullMutex).
  *             If thread safety is required supply a mutex of your choice.
  */
-template<typename T, typename M = DummyMutex>
+template<typename T, typename M = NullMutex>
 class CachedCallable
 {
 public:

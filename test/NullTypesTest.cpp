@@ -31,27 +31,38 @@
  */
 
 #include <gtest/gtest.h>
-#include <DummyMutex.hpp>
+#include <NullTypes.hpp>
 #include <mutex>
 
-using simons_lib::lock::DummyMutex;
+using simons_lib::null_types::NullMutex;
+using simons_lib::null_types::NullObj;
 
 /**
  * @note: This tests are a success then there are no errors during compilation.
  *        There is not much to test because is only the interface.
  */
-TEST(DummyMutexTest, use_with_lock_guard)
+TEST(NullMutexTest, use_with_lock_guard)
 {
-    auto mtx  = DummyMutex();
+    auto mtx  = NullMutex();
     auto lock = std::lock_guard<decltype(mtx)>(mtx);
 }
 
-TEST(DummyMutexTest, use_with_lock)
+TEST(NullMutexTest, use_with_lock)
 {
-    auto mtx  = DummyMutex();
+    auto mtx  = NullMutex();
     auto lock = std::unique_lock<decltype(mtx)>(mtx);
 
     lock.unlock();
     lock.lock();
     lock.unlock();
+}
+
+TEST(NullMutexTest, operator_equality)
+{
+    ASSERT_EQ(NullObj() == NullObj(), true);
+}
+
+TEST(NullMutexTest, operator_inequality)
+{
+    ASSERT_EQ(NullObj() != NullObj(), false);
 }

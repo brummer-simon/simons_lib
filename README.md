@@ -8,7 +8,7 @@ stay in a loop in case of hard faults instead of exiting to a OS).
 - CachedCallable: A cache for computation results of callable object. Threadsafety is configurable.
 - RandomNumberGenerator: Small wrapper used to combine a random engine and a distribution into a single object. Threadsafety is configurable.
 - LockGuard: Simple reimplementation of std::lock_guard.
-- DummyMutex: Mutex dummy to use where no threadsafety is required.
+- NullTypes: Dummy implementations that can act as template parameters (NullObj, NullMutex).
 - Result: Alternative to exception based error handling. Heavily inspired by Rusts "Result" type.
 - Math: Several math related functions.
 

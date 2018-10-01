@@ -1,8 +1,8 @@
 /**
- * @file      DummyMutexImpl.hpp
+ * @file      NullTypes.hpp
  * @author    Simon Brummer (<simon.brummer@posteo.de>)
- * @brief     Dummy implementation of the std::mutex interface.
- * @copyright 2018 Simon Brummer. All rights reserved.\n
+ * @brief     Various Dummy implementations. Meta-header.
+ * @copyright 2018 Simon Brummer. All rights reserved.
  *            This project is released under the BSD 3-Clause License.
  */
 
@@ -38,44 +38,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DUMMY_MUTEX_IMPL_HPP_20180825084201
-#define DUMMY_MUTEX_IMPL_HPP_20180825084201
+#ifndef NULL_TYPES_HPP_20180825084201
+#define NULL_TYPES_HPP_20180825084201
 
-namespace simons_lib::lock
-{
+#include "NullTypes/NullObjImpl.hpp"
+#include "NullTypes/NullMutexImpl.hpp"
 
-/**
- * @brief Dummy implementation of the std::mutex interface.
- * @note This class is intended to be optimized out, in cases
- *       where thread safety is not required.
- */
-class DummyMutex
-{
-public:
-    /**
-     * @brief locks the mutex dummy. Does nothing.
-     */
-    void lock(void) const noexcept
-    {
-    }
-
-    /**
-     * @brief try_locks the mutex dummy. Does nothing.
-     * @returns always true;
-     */
-    bool try_lock(void) const noexcept
-    {
-        return true;
-    }
-
-    /**
-     * @brief unlocks the mutex dummy. Does nothing.
-     */
-    void unlock(void) const noexcept
-    {
-    }
-};
-
-} // namespace simons_lib::lock
-
-#endif // DUMMY_MUTEX_IMPL_HPP_20180825084201
+#endif // NULL_TYPES_HPP_20180825084201

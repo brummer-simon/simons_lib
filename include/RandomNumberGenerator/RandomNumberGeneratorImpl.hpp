@@ -43,22 +43,22 @@
 
 #include <random>
 #include "../LockGuard.hpp"
-#include "../DummyMutex.hpp"
+#include "../NullTypes.hpp"
 
 namespace simons_lib::random_number_generator
 {
 
-using simons_lib::lock::DummyMutex;
+using simons_lib::null_types::NullMutex;
 using simons_lib::lock::LockGuard;
 
 /**
  * @brief Thin wrapper around the STL random number generator facilities.
  * @tparam E   Random engine type to use.
  * @tparam D   Distribution type to use.
- * @tparam M   Mutex used for synchronization, defaults to DummyMutex.
+ * @tparam M   Mutex used for synchronization, defaults to NullMutex.
  *             If thread safety is required, supply std::mutex
  */
-template <typename E, typename D, typename M = DummyMutex>
+template <typename E, typename D, typename M = NullMutex>
 class RandomNumberGenerator
 {
 public:
