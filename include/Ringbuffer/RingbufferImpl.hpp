@@ -1,7 +1,7 @@
 /**
- * @file      CachedCallableImpl.hpp
+ * @file      RingbufferImpl.hpp
  * @author    Simon Brummer (<simon.brummer@posteo.de>)
- * @brief     Simple cache for callable results.
+ * @brief     Generic fixed-sized ringbuffer.
  * @copyright 2018 Simon Brummer. All rights reserved.\n
  *            This project is released under the BSD 3-Clause License.
  */
@@ -38,80 +38,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CACHED_CALLABLE_IMPL_HPP_20180825084201
-#define CACHED_CALLABLE_IMPL_HPP_20180825084201
+#ifndef RINGBUFFER_IMPL_HPP_20181001091421
+#define RINGBUFFER_IMPL_HPP_20181001091421
 
-#include <functional>
-#include <optional>
+#include <array>
 #include "../LockGuard.hpp"
-#include "../NullTypes.hpp"
+#include "../DummyMutex.hpp"
 
-namespace simons_lib::cached_callable
+namespace simons_lib::ringbuffer
 {
 
-/**
- * @brief Simple cache for results returned by callable objects.
- * @tparam T   The cached result type.
- * @tparam M   Internally used mutex type (defaults to NullMutex).
- *             If thread safety is required supply a mutex of your choice.
- */
-template<typename T, typename M = simons_lib::null_types::NullMutex>
-class CachedCallable
+template<typename T, std::size_t S, typename M = simons_lib::lock::DummyMutex>
+class Ringbuffer
 {
 public:
-    /// @brief Type the stored callable return value.
-    using ResultType = T;
     /// @brief Type of supplied mutex.
     using MutexType = M;
     /// @brief Lock to use with given mutex.
     using LockType = simons_lib::lock::LockGuard<MutexType>;
-    /// @brief Type of stored callable object.
-    using CallableType = std::function<ResultType(void)>;
-
-    /**
-     * @brief Constructor.
-     * @param[in] callable   Callable object those results should be cached.
-     */
-    CachedCallable(CallableType callable) noexcept
-        : m_callable(callable)
-        , m_result()
-        , m_mutex()
-    {
-    }
-
-    /**
-     * @brief Get cached result.
-     * @note In case the cache holds currently no result, the stored
-     *       callable is executed first and its result is stored.
-     * @returns A copy of the cached result.
-     */
-    ResultType operator ()(void)
-    {
-        auto guard = LockType(m_mutex);
-        if (!m_result)
-        {
-            m_result = m_callable();
-        }
-        return *m_result;
-    }
-
-    /**
-     * @brief Discard the currently cached result.
-     * @note After this calling this method, the stored callable
-     *       is always re-evaluated on calling operator () (void)
-     */
-    void reset(void)
-    {
-        auto guard = LockType(m_mutex);
-        m_result.reset();
-    }
 
 private:
-    CallableType              m_callable;
-    std::optional<ResultType> m_result;
-    MutexType                 m_mutex;
+    std::array<T, S> m_rawBuf;
+    MutexType        m_mutex;
 };
 
-} // namespace simons_lib::cached_callable
+template<typename T, std::size_t S>
+bool operator == (Ringbuffer<T, S> const& lhs, Ringbuffer<T, S> const& rhs)
+{
+    // TODO: Implement me
+    return false;
+}
 
-#endif // CACHED_CALLABLE_IMPL_HPP_20180825084201
+template<typename T, std::size_t S>
+bool operator == (Ringbuffer<T, S> const& lhs, Ringbuffer<T, S> const& rhs)
+{
+    return !(lhs == rhs);
+}
+
+} // simons_lib::ringbuffer
+
+#endif // RINGBUFFER_IMPL_HPP_20181001091421
