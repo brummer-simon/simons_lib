@@ -42,9 +42,10 @@
 #define RINGBUFFER_IMPL_HPP_20181001091421
 
 #include <array>
-#include <optional>
+#include <initializer_list>
 #include "../LockGuard.hpp"
 #include "../DummyMutex.hpp"
+#include "../Result.hpp"
 
 namespace simons_lib::ringbuffer
 {
@@ -53,32 +54,55 @@ template<typename T, std::size_t S, typename M = simons_lib::lock::DummyMutex>
 class Ringbuffer
 {
 public:
+    /// @brief Internally used container type.
+    using ContainerType = std::array<T, S>;
     /// @brief Type contained in Ringbuffer.
-    using ValueType = T;
+    using ValueType = ContainerType::value_type;
     /// @brief Ref to type contained in Ringbuffer.
-    using Reference = ValueType &;
+    using Reference = ContainerType::reference;
     /// @brief Const ref to type contained in Ringbuffer.
-    using ConstReference = ValueType const&;
+    using ConstReference = ContainerType::const_reference;
     /// @brief Type used to express the Ringbuffer sizes.
-    using SizeType = decltype(S);
+    using SizeType = ContainerType::size_type;
     /// @brief Type of supplied mutex.
     using MutexType = M;
     /// @brief Lock to use with given mutex.
     using LockType = simons_lib::lock::LockGuard<MutexType>;
 
-    std::optional<T> front() const
+    using ResultType = simons_lib::result::Result<T, char const *>;
+
+    Ringbuffer()
+        : m_rawBuf()
+        , m_idxHead(0)
+        , m_idxTail(0)
+        , m_mutex()
+        , m_isFull(0)
     {
-        return std::nullopt
     }
 
-    std::optional<T> back() const
+    /*
+    Ringbuffer(std::initializer_list<ValueType> const& list)
     {
-        return std::nullopt
+        for (auto const& node : list)
+        {
+
+        }
+    }
+    */
+
+    ResultType front() const
+    {
+        return ResultType::ErrType("front() not implemented");
+    }
+
+    ResultType back() const
+    {
+        return ResultType::ErrType("back() not implemented");
     }
 
     bool empty() const
     {
-        return false;
+        return (m_head == m_tail) && (!m_isFull);
     }
 
     SizeType size() const
@@ -86,16 +110,29 @@ public:
         return 0;
     }
 
-    void push()
+    ResultType push(T const& val)
     {
+        if (size() >= S)
+        {
+            return ResultType::ErrType("Ringbuffer: out of memory.");
+        }
+
+        m_rawBuf[m_head] = val;
+
+        if (++m_head == S)
+        {
+            m_head = 0;
+        }
     }
 
-    void pop()
+    ResultType pop()
     {
+        return ResultType::ErrType("pop() not implemented");
     }
 
-    void emplace()
+    ResultType emplace()
     {
+        return ResultType::ErrType("emplace() not implemented");
     }
 
     void swap()
@@ -103,7 +140,10 @@ public:
     }
 
 private:
-    std::array<T, S>  m_rawBuf;
+    ContainerType     m_rawBuf;
+    SizeType          m_head;
+    SizeType          m_tail;
+    bool              m_isFull;
     mutable MutexType m_mutex;
 };
 
