@@ -80,7 +80,7 @@ TEST(ModuloUnsignedTest, operator_assign_plus)
     ASSERT_EQ(ModuloUnsigned<128u>(0u) += 4u, ModuloUnsigned<128u>(4u));
 
     // Test Overflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 128, ModuloUnsigned<128u>(0u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 128u, ModuloUnsigned<128u>(0u));
 }
 
 TEST(ModuloUnsignedTest, operator_assign_plus_ModuloUnsigned)
@@ -92,7 +92,7 @@ TEST(ModuloUnsignedTest, operator_assign_plus_ModuloUnsigned)
     ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(4u), ModuloUnsigned<128u>(4u));
 
     // Test Overflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(128), ModuloUnsigned<128u>(0u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(128u), ModuloUnsigned<128u>(0u));
 }
 
 TEST(ModuloUnsignedTest, operator_plus)
@@ -104,7 +104,7 @@ TEST(ModuloUnsignedTest, operator_plus)
     ASSERT_EQ(ModuloUnsigned<128u>(0u) + 4u, ModuloUnsigned<128u>(4u));
 
     // Test Overflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 128, ModuloUnsigned<128u>(0u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 128u, ModuloUnsigned<128u>(0u));
 }
 
 TEST(ModuloUnsignedTest, operator_plus_ModuloUnsigned)
@@ -134,37 +134,37 @@ TEST(ModuloUnsignedTest, prefix_minusminus)
 TEST(ModuloUnsignedTest, operator_assign_minus)
 {
     // Test Normal Operation
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 1, ModuloUnsigned<128u>(126u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 2, ModuloUnsigned<128u>(125u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 3, ModuloUnsigned<128u>(124u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 4, ModuloUnsigned<128u>(123u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 1u, ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 2u, ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 3u, ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 4u, ModuloUnsigned<128u>(123u));
 
     // Test Underflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= 1, ModuloUnsigned<128u>(127u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= 1u, ModuloUnsigned<128u>(127u));
 }
 
 TEST(ModuloUnsignedTest, operator_assign_minus_ModuloUnsgined)
 {
     // Test Normal Operation
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(126u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(2), ModuloUnsigned<128u>(125u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(3), ModuloUnsigned<128u>(124u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(4), ModuloUnsigned<128u>(123u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(1u), ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(2u), ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(3u), ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(4u), ModuloUnsigned<128u>(123u));
 
     // Test Underflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(127u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= ModuloUnsigned<128u>(1u), ModuloUnsigned<128u>(127u));
 }
 
 TEST(ModuloUnsignedTest, operator_minus)
 {
     // Test Normal Operation
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 1, ModuloUnsigned<128u>(126u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 2, ModuloUnsigned<128u>(125u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 3, ModuloUnsigned<128u>(124u));
-    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 4, ModuloUnsigned<128u>(123u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 1u, ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 2u, ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 3u, ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 4u, ModuloUnsigned<128u>(123u));
 
     // Test Underflow
-    ASSERT_EQ(ModuloUnsigned<128u>(0u) - 1, ModuloUnsigned<128u>(127u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) - 1u, ModuloUnsigned<128u>(127u));
 }
 
 TEST(ModuloUnsignedTest, operator_minus_ModuloUnsigned)

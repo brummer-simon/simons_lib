@@ -47,8 +47,6 @@ WARNINGS := \
 	-Wsign-compare \
 	-Wconversion
 
-CPPFLAGS := \
-
 CPPFLAGS_GTEST := \
 	-Og \
 	-ggdb

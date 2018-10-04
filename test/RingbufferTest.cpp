@@ -32,10 +32,18 @@
 
 #include <gtest/gtest.h>
 #include <Ringbuffer.hpp>
+#include <NullTypes.hpp>
 
 using namespace simons_lib::ringbuffer;
+using simons_lib::null_types::NullObj;
 
 TEST(Ringbuffer, implement_me)
 {
+    auto obj = NullObj();
+    auto buf = Ringbuffer<NullObj, 5>();
 
+    auto result = buf.push(obj);
+    ASSERT_EQ(result.isOk(), true);
+    //ASSERT_EQ(buf.front().getOk(), obj);
+    //ASSERT_EQ(buf.back().getOk(), obj);
 }

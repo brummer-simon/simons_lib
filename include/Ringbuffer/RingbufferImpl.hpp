@@ -44,107 +44,114 @@
 #include <array>
 #include <initializer_list>
 #include "../LockGuard.hpp"
-#include "../DummyMutex.hpp"
+#include "../NullTypes.hpp"
 #include "../Result.hpp"
+#include "../Math/ModuloUnsignedImpl.hpp"
 
 namespace simons_lib::ringbuffer
 {
 
-template<typename T, std::size_t S, typename M = simons_lib::lock::DummyMutex>
+// Draw Result and NullObj into local namespace
+using namespace simons_lib::result;
+using simons_lib::null_types::NullObj;
+
+template<typename T, std::size_t S, typename M = simons_lib::null_types::NullMutex>
 class Ringbuffer
 {
 public:
     /// @brief Internally used container type.
     using ContainerType = std::array<T, S>;
     /// @brief Type contained in Ringbuffer.
-    using ValueType = ContainerType::value_type;
+    using ValueType = typename ContainerType::value_type;
     /// @brief Ref to type contained in Ringbuffer.
-    using Reference = ContainerType::reference;
+    using Reference = typename ContainerType::reference;
     /// @brief Const ref to type contained in Ringbuffer.
-    using ConstReference = ContainerType::const_reference;
+    using ConstReference = typename ContainerType::const_reference;
     /// @brief Type used to express the Ringbuffer sizes.
-    using SizeType = ContainerType::size_type;
+    using SizeType = typename ContainerType::size_type;
+
+private:
     /// @brief Type of supplied mutex.
     using MutexType = M;
     /// @brief Lock to use with given mutex.
     using LockType = simons_lib::lock::LockGuard<MutexType>;
 
-    using ResultType = simons_lib::result::Result<T, char const *>;
+public:
+    /// @brief ErrorCodes returned as Result error type.
+    enum class ErrorCodes
+    {
+        OutOfMemory = 1,
+        BufferEmpty = 2,
+        NoImpl      = 3
+    };
 
     Ringbuffer()
         : m_rawBuf()
-        , m_idxHead(0)
-        , m_idxTail(0)
+        , m_head(0)
+        , m_tail(0)
+        , m_size(0)
         , m_mutex()
-        , m_isFull(0)
     {
     }
 
-    /*
-    Ringbuffer(std::initializer_list<ValueType> const& list)
-    {
-        for (auto const& node : list)
-        {
-
-        }
-    }
-    */
-
-    ResultType front() const
-    {
-        return ResultType::ErrType("front() not implemented");
-    }
-
-    ResultType back() const
-    {
-        return ResultType::ErrType("back() not implemented");
-    }
+    /* TODO: Add init list */
 
     bool empty() const
     {
-        return (m_head == m_tail) && (!m_isFull);
+        auto guard = LockType(m_mutex);
+        return (m_size == 0);
     }
 
     SizeType size() const
     {
-        return 0;
+        auto guard = LockType(m_mutex);
+        return m_size;
     }
 
-    ResultType push(T const& val)
+    SizeType capacity() const
     {
-        if (size() >= S)
+        return S;
+    }
+
+    Result<void, ErrorCodes> push(T const& val)
+    {
+        // Check if there is enough room for an additional element.
+        if (size() >= capacity())
         {
-            return ResultType::ErrType("Ringbuffer: out of memory.");
+            return Result<void, ErrorCodes>(Err(ErrorCodes::OutOfMemory));
         }
 
-        m_rawBuf[m_head] = val;
+        // Add Object to Buffer and increase head
+        m_rawBuf[static_cast<SizeType>(m_head)] = val;
+        ++m_head;
 
-        if (++m_head == S)
+        if (m_head == m_tail)
         {
-            m_head = 0;
+            m_isFull = true;
         }
+        return Result<void, ErrorCodes>(Ok());
     }
 
-    ResultType pop()
+    Result<void, ErrorCodes> pop()
     {
-        return ResultType::ErrType("pop() not implemented");
+        return Result<void, ErrorCodes>(Err(ErrorCodes::NoImpl));
     }
 
-    ResultType emplace()
+    Result<ValueType, ErrorCodes> peek() const
     {
-        return ResultType::ErrType("emplace() not implemented");
-    }
-
-    void swap()
-    {
+        if (empty())
+        {
+            return Result<ValueType, ErrorCodes>(Err(ErrorCodes::BufferEmpty));
+        }
+        return Result<ValueType, ErrorCodes>(Ok(m_rawBuf[static_cast<SizeType>(m_head - 1)]));
     }
 
 private:
-    ContainerType     m_rawBuf;
-    SizeType          m_head;
-    SizeType          m_tail;
-    bool              m_isFull;
-    mutable MutexType m_mutex;
+    ContainerType                       m_rawBuf;
+    simons_lib::math::ModuloUnsigned<S> m_head;
+    simons_lib::math::ModuloUnsigned<S> m_tail;
+    SizeType                            m_size;
+    mutable MutexType                   m_mutex;
 };
 
 template<typename T, std::size_t S>
@@ -155,7 +162,7 @@ bool operator == (Ringbuffer<T, S> const& lhs, Ringbuffer<T, S> const& rhs)
 }
 
 template<typename T, std::size_t S>
-bool operator == (Ringbuffer<T, S> const& lhs, Ringbuffer<T, S> const& rhs)
+bool operator != (Ringbuffer<T, S> const& lhs, Ringbuffer<T, S> const& rhs)
 {
     return !(lhs == rhs);
 }
