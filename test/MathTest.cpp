@@ -33,7 +33,214 @@
 #include <gtest/gtest.h>
 #include <Math.hpp>
 
-TEST(MathTest, isPowOfTwo)
+using simons_lib::math::ModuloUnsigned;
+
+TEST(ModuloUnsignedTest, Constructors)
+{
+    // Test Default Constructor
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<1u>()), 0u);
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<2u>()), 0u);
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<3u>()), 0u);
+
+    // Test Constructor
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<1u>(1u)), 0u);
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<2u>(1u)), 1u);
+    ASSERT_EQ(static_cast<unsigned>(ModuloUnsigned<2u>(3u)), 1u);
+
+    // Play around
+    ASSERT_EQ( static_cast<unsigned>(ModuloUnsigned<128u>(0u))
+             , static_cast<unsigned>(ModuloUnsigned<128u>(128u))
+             );
+    ASSERT_EQ( static_cast<unsigned>(ModuloUnsigned<128u>(127u))
+             , static_cast<unsigned>(ModuloUnsigned<128u>(255u))
+             );
+    ASSERT_EQ( static_cast<unsigned>(ModuloUnsigned<128u>(129u))
+             , static_cast<unsigned>(ModuloUnsigned<128u>(257u))
+             );
+}
+
+TEST(ModuloUnsignedTest, prefix_plusplus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(++ModuloUnsigned<128u>(0u), ModuloUnsigned<128u>(1u));
+    ASSERT_EQ(++++ModuloUnsigned<128u>(0u), ModuloUnsigned<128u>(2u));
+    ASSERT_EQ(++++++ModuloUnsigned<128u>(0u), ModuloUnsigned<128u>(3u));
+    ASSERT_EQ(++++++++ModuloUnsigned<128u>(0u), ModuloUnsigned<128u>(4u));
+
+    // Test Overflow
+    ASSERT_EQ(++ModuloUnsigned<128u>(127u), ModuloUnsigned<128u>(0u));
+}
+
+TEST(ModuloUnsignedTest, operator_assign_plus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 1u, ModuloUnsigned<128u>(1u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 2u, ModuloUnsigned<128u>(2u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 3u, ModuloUnsigned<128u>(3u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 4u, ModuloUnsigned<128u>(4u));
+
+    // Test Overflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += 128, ModuloUnsigned<128u>(0u));
+}
+
+TEST(ModuloUnsignedTest, operator_assign_plus_ModuloUnsigned)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(1u), ModuloUnsigned<128u>(1u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(2u), ModuloUnsigned<128u>(2u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(3u), ModuloUnsigned<128u>(3u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(4u), ModuloUnsigned<128u>(4u));
+
+    // Test Overflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) += ModuloUnsigned<128u>(128), ModuloUnsigned<128u>(0u));
+}
+
+TEST(ModuloUnsignedTest, operator_plus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 1u, ModuloUnsigned<128u>(1u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 2u, ModuloUnsigned<128u>(2u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 3u, ModuloUnsigned<128u>(3u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 4u, ModuloUnsigned<128u>(4u));
+
+    // Test Overflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + 128, ModuloUnsigned<128u>(0u));
+}
+
+TEST(ModuloUnsignedTest, operator_plus_ModuloUnsigned)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + ModuloUnsigned<128u>(1u), ModuloUnsigned<128u>(1u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + ModuloUnsigned<128u>(2u), ModuloUnsigned<128u>(2u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + ModuloUnsigned<128u>(3u), ModuloUnsigned<128u>(3u));
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + ModuloUnsigned<128u>(4u), ModuloUnsigned<128u>(4u));
+
+    // Test Overflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) + ModuloUnsigned<128u>(128u), ModuloUnsigned<128u>(0u));
+}
+
+TEST(ModuloUnsignedTest, prefix_minusminus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(--ModuloUnsigned<128u>(127u), ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(----ModuloUnsigned<128u>(127u), ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(------ModuloUnsigned<128u>(127u), ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(--------ModuloUnsigned<128u>(127u), ModuloUnsigned<128u>(123u));
+
+    // Test Underflow
+    ASSERT_EQ(--ModuloUnsigned<128u>(0u), ModuloUnsigned<128u>(127u));
+}
+
+TEST(ModuloUnsignedTest, operator_assign_minus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 1, ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 2, ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 3, ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= 4, ModuloUnsigned<128u>(123u));
+
+    // Test Underflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= 1, ModuloUnsigned<128u>(127u));
+}
+
+TEST(ModuloUnsignedTest, operator_assign_minus_ModuloUnsgined)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(2), ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(3), ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) -= ModuloUnsigned<128u>(4), ModuloUnsigned<128u>(123u));
+
+    // Test Underflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) -= ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(127u));
+}
+
+TEST(ModuloUnsignedTest, operator_minus)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 1, ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 2, ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 3, ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - 4, ModuloUnsigned<128u>(123u));
+
+    // Test Underflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) - 1, ModuloUnsigned<128u>(127u));
+}
+
+TEST(ModuloUnsignedTest, operator_minus_ModuloUnsigned)
+{
+    // Test Normal Operation
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(126u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - ModuloUnsigned<128u>(2), ModuloUnsigned<128u>(125u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - ModuloUnsigned<128u>(3), ModuloUnsigned<128u>(124u));
+    ASSERT_EQ(ModuloUnsigned<128u>(127u) - ModuloUnsigned<128u>(4), ModuloUnsigned<128u>(123u));
+
+    // Test Underflow
+    ASSERT_EQ(ModuloUnsigned<128u>(0u) - ModuloUnsigned<128u>(1), ModuloUnsigned<128u>(127u));
+}
+
+TEST(ModuloUnsignedTest, operator_equality)
+{
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) == ModuloUnsigned<16u>(16u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(15u) == ModuloUnsigned<16u>(31u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) == ModuloUnsigned<16u>(33u), true);
+
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) == ModuloUnsigned<16u>(33u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) == ModuloUnsigned<16u>(34u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(2u) == ModuloUnsigned<16u>(35u), false);
+}
+
+TEST(ModuloUnsignedTest, operator_inequality)
+{
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) != ModuloUnsigned<16u>(1u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) != ModuloUnsigned<16u>(2u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(2u) != ModuloUnsigned<16u>(3u), true);
+
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) != ModuloUnsigned<16u>(16u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(15u) != ModuloUnsigned<16u>(31u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) != ModuloUnsigned<16u>(33u), false);
+}
+
+TEST(ModuloUnsignedTest, operators_compare)
+{
+    // Test: <
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) <  ModuloUnsigned<16u>(1u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) <  ModuloUnsigned<16u>(0u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) <  ModuloUnsigned<16u>(1u), false);
+
+    // Test: <=
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) <= ModuloUnsigned<16u>(0u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) <= ModuloUnsigned<16u>(1u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) <= ModuloUnsigned<16u>(0u), false);
+
+    // Test: >
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) >  ModuloUnsigned<16u>(0u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) >  ModuloUnsigned<16u>(1u), false);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) >  ModuloUnsigned<16u>(1u), false);
+    // Test: >=
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) >= ModuloUnsigned<16u>(0u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(1u) >= ModuloUnsigned<16u>(0u), true);
+    ASSERT_EQ(ModuloUnsigned<16u>(0u) >= ModuloUnsigned<16u>(1u), false);
+}
+
+TEST(UtilityFunctionsTest, mod)
+{
+    // Test some trivial cases
+    ASSERT_EQ(simons_lib::math::mod(0u, 1u), 0u);
+    ASSERT_EQ(simons_lib::math::mod(1u, 1u), 0u);
+    ASSERT_EQ(simons_lib::math::mod(2u, 1u), 0u);
+
+    ASSERT_EQ(simons_lib::math::mod(0u, 2u), 0u);
+    ASSERT_EQ(simons_lib::math::mod(1u, 2u), 1u);
+    ASSERT_EQ(simons_lib::math::mod(2u, 2u), 0u);
+    ASSERT_EQ(simons_lib::math::mod(3u, 2u), 1u);
+
+    ASSERT_EQ(simons_lib::math::mod(0u, 64u), simons_lib::math::mod(128u, 64u));
+    ASSERT_EQ(simons_lib::math::mod(1u, 64u), simons_lib::math::mod(129u, 64u));
+    ASSERT_EQ(simons_lib::math::mod(2u, 64u), simons_lib::math::mod(130u, 64u));
+}
+
+TEST(UtilityFunctionsTest, isPowOfTwo)
 {
     // Test for all powers of two in uint64_t. Result must be true.
     for (auto i = 0; i < 64; ++i)

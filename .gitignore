@@ -31,5 +31,8 @@
 *.out
 *.app
 
+# Workspace settings
+*.sublime-workspace
+
 # Documentation
 doc/html/*

@@ -169,3 +169,35 @@ TEST(ResultTest, unwrapOrElse)
     auto err = Result<int, int>(Err<int>(0));
     ASSERT_EQ(err.unwrapOrElse(fn), 1);
 }
+
+TEST(ResultTest, operator_equality)
+{
+    auto ok0 = Result<int, int>(Ok<int>(0));
+    auto ok1 = Result<int, int>(Ok<int>(1));
+    auto err0 = Result<int, int>(Err<int>(0));
+    auto err1 = Result<int, int>(Err<int>(1));
+
+    ASSERT_EQ(ok0 == ok0, true);
+    ASSERT_EQ(err0 == err0, true);
+
+    ASSERT_EQ(ok0 == ok1, false);
+    ASSERT_EQ(err0 == err1, false);
+    ASSERT_EQ(ok0 == err0, false);
+    ASSERT_EQ(err0 == ok0, false);
+}
+
+TEST(ResultTest, operator_inequality)
+{
+    auto ok0 = Result<int, int>(Ok<int>(0));
+    auto ok1 = Result<int, int>(Ok<int>(1));
+    auto err0 = Result<int, int>(Err<int>(0));
+    auto err1 = Result<int, int>(Err<int>(1));
+
+    ASSERT_EQ(ok0 != ok0, false);
+    ASSERT_EQ(err0 != err0, false);
+
+    ASSERT_EQ(ok0 != ok1, true);
+    ASSERT_EQ(err0 != err1, true);
+    ASSERT_EQ(ok0 != err0, true);
+    ASSERT_EQ(err0 != ok0, true);
+}

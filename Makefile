@@ -10,6 +10,11 @@ CPPFLAGS = \
 	-Wextra \
 	-Wpedantic \
 	-Werror \
+	-Wtype-limits \
+	-Wstrict-overflow=5 \
+	-fstrict-overflow \
+	-Wsign-compare \
+	-Wconversion\
 
 LDFLAGS = \
 	-lpthread \
@@ -34,7 +39,7 @@ MAKE_DOC  = doxygen doc/doxygen_cfg
 .PHONY: test doc all
 
 test:
-	$(CC) $(CPPFLAGS) $(LDFLAGS) $(TEST_SRC) -o $(TEST_BIN)
+	$(CC) $(CPPFLAGS) $(TEST_SRC) $(LDFLAGS) -o $(TEST_BIN)
 	$(TEST_BIN)
 
 doc:

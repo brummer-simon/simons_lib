@@ -42,10 +42,10 @@
 #define UTILITY_FUNCTIONS_IMPL_HPP_20180923091648
 
 #include <type_traits>
+#include "../Defines.hpp"
 
 namespace simons_lib::math
 {
-
 /**
  * @brief Test if given integer is a power of two.
  * @tparam    T   Type of @p i. Must be an unsigned integer.
@@ -55,7 +55,7 @@ namespace simons_lib::math
 template<typename T>
 constexpr bool isPowOfTwo(T i)
 {
-    static_assert(std::is_unsigned<T>::value, "Type has to be an unsigned integer");
+    static_assert(std::is_unsigned<T>::value);
 
     auto bitCnt = 0;
     while (i)
@@ -67,6 +67,44 @@ constexpr bool isPowOfTwo(T i)
         i >>= 1;
     }
     return (bitCnt == 1);
+}
+
+/// @brief Tag type: Use normal % operator in mod()
+struct ModAlgoOperatorMod {};
+/// @brief Tag type: Use subtraction loop in mod()
+struct ModAlgoLoop {};
+
+/**
+ * @brief Configurable modulo operator for unsigned types.
+ * @tparam    T   Type of @p i. Must be an unsigned integer.
+ * @tparam    Algo   Algorithm to use in function.
+ * @param[in] lhs   Left hand side.
+ * @param[in] rhs   Right hand side.
+ * @returns   @p lhs % @p rhs.
+ */
+#ifndef SIMONS_LIB_DISABLE_OPERATOR_MOD
+template<typename T, typename Algo = ModAlgoOperatorMod>
+#else
+template<typename T, typename Algo = ModAlgoLoop>
+#endif
+constexpr T mod (T const& lhs, T const& rhs)
+{
+    static_assert(std::is_unsigned<T>::value);
+
+    if constexpr (std::is_same<Algo, ModAlgoOperatorMod>::value)
+    {
+        return lhs % rhs;
+    }
+
+    if constexpr (std::is_same<Algo, ModAlgoLoop>::value)
+    {
+        auto tmp = lhs;
+        while (rhs <= tmp)
+        {
+            tmp -= rhs;
+        }
+        return tmp;
+    }
 }
 
 } // namespace simons_lib::math

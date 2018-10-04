@@ -41,6 +41,7 @@
 #ifndef MATH_HPP_20180923091200
 #define MATH_HPP_20180923091200
 
+#include "Math/ModuloUnsignedImpl.hpp"
 #include "Math/UtilityFunctionsImpl.hpp"
 
 #endif // MATH_HPP_20180923091200
