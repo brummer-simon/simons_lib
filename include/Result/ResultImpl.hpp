@@ -56,46 +56,59 @@ namespace simons_lib::result
  * @tparam E   Type associated with a failed Result.
  */
 template<typename T, typename E>
-class [[nodiscard]] Result
+class Result
 {
 public:
     /// @brief Value type contained in successful results.
-    using OkValueType = T;
-    /// @brief Value type contained in faulty results.
-    using ErrValueType = E;
+    using OkTypeValue = T;
     /// @brief Type holding a successful result.
-    using OkType = Ok<OkValueType>;
+    using OkType = Ok<OkTypeValue>;
+    /// @brief Value type contained in faulty results.
+    using ErrTypeValue = E;
     /// @brief Type holding a failed result.
-    using ErrType = Err<ErrValueType>;
+    using ErrType = Err<ErrTypeValue>;
     /// @brief Type holding a either and successful or a failed result.
-    using OutcomeType = std::variant<OkType, ErrType>;
+    using Outcome = std::variant<OkType, ErrType>;
 
     /**
      * @brief Construct Result.
-     * @param[in] result   Either Ok<T> indicating as successful result
-     *                     or Err<E> in case of a failed result.
+     * @param[in] outcome   Either Ok<T> indicating as successful result
+     *                      or Err<E> in case of a failed result.
      */
-    explicit Result(OutcomeType result)
-        : m_result(std::move(result))
+    explicit Result(Outcome outcome)
+        : m_outcome(std::move(outcome))
+        , m_fnBase(m_outcome)
+        , m_fnOkNotVoid(m_outcome)
+        , m_fnErrNotVoid(m_outcome)
+        , m_fnAllNotVoid(m_outcome)
     {
+    }
+
+    /**
+     * @brief Accessors to the internal variant holding the Results Outcome.
+     * @returns const ref to internal outcome.
+     */
+    Outcome const& getOutcome(void) const
+    {
+        return m_fnBase.getOutcome();
     }
 
     /**
      * @brief Check if result contains a success value.
      * @returns true in case the Result contains a success, otherwise false.
      */
-    bool isOk() const
+    bool isOk(void) const
     {
-        return std::visit(detail::IsVisitor<OkType, ErrType>(), m_result);
+        return m_fnBase.isOk();
     }
 
     /**
      * @brief Check if result contains an error value.
      * @returns true in case the Result contains an error, otherwise false.
      */
-    bool isErr() const
+    bool isErr(void) const
     {
-        return std::visit(detail::IsVisitor<ErrType, OkType>(), m_result);
+        return m_fnBase.isErr();
     }
 
     /**
@@ -103,9 +116,9 @@ public:
      * @returns std::optional<T> holding the value stored in Ok<T>, if
      *          the result holds Ok<T>. Otherwise std::nullopt is returned.
      */
-    std::optional<OkValueType> getOk() const
+    std::optional<OkTypeValue> getOk(void) const
     {
-        return std::visit(detail::GetVisitor<OkType, ErrType>(), m_result);
+        return m_fnOkNotVoid.getOk();
     }
 
     /**
@@ -113,63 +126,284 @@ public:
      * @returns std::optional<E> holding the value stored in Err<E>, if
      *          the result holds Err<E>. Otherwise std::nullopt is returned.
      */
-    std::optional<ErrValueType> getErr() const
+    std::optional<ErrTypeValue> getErr(void) const
     {
-        return std::visit(detail::GetVisitor<ErrType, OkType>(), m_result);
+        return m_fnErrNotVoid.getErr();
     }
 
     /**
      * @brief Get value stored in Ok<T> (held by the Result) directly.
      * @note Terminates application in case the result holds an Err<E>.
      */
-    OkValueType unwrap() const
+    OkTypeValue unwrap(void) const
     {
-        auto fn = [] (ErrValueType const&) -> OkValueType
-        {
-            detail::abort("Critical Error: unwrap() contained Err<T>");
-        };
-        return std::visit(detail::UnwrapVisitor<OkType, ErrType>(fn), m_result);
+        return m_fnOkNotVoid.unwrap();
     }
 
     /**
      * @brief Get value stored in Err<E> (held by the Result) directly.
      * @note Terminates application in case the result holds an Ok<T>.
      */
-    ErrValueType unwrapErr() const
+    ErrTypeValue unwrapErr(void) const
     {
-        auto fn = [] (OkValueType const&) -> ErrValueType
-        {
-            detail::abort("Critical Error: unwrapErr() contained Ok<T>");
-        };
-        return std::visit(detail::UnwrapVisitor<ErrType, OkType>(fn), m_result);
+        return m_fnErrNotVoid.unwrapErr();
     }
 
     /**
      * @brief Get value stored in Ok<T> (held by the Result) or return given default value.
      * @param[in] val   Default value if result holds Err<E> instead of Ok<T>.
-     * @returns Value stored in Ok<T>  or @p val.
+     * @returns Value stored in Ok<T> or @p val.
      */
-    OkValueType unwrapOrDefault(OkValueType const& val) const
+    OkTypeValue unwrapOrDefault(OkTypeValue const& val) const
     {
-        auto fn = [&val] (auto const&)
-        {
-            return val;
-        };
-        return std::visit(detail::UnwrapVisitor<OkType, ErrType>(fn), m_result);
+        return m_fnOkNotVoid.unwrapOrDefault(val);
     }
 
     /**
      * @brief Get value stored in Ok<T> or apply given function on the value stored on Err<T>.
-     * @param[in] fn   Function to apply on value contained in Err<E> in case the result
-     *                 contains Err<E>.
+     * @param[in] fn   Function to apply on value contained in Err<E> in case the result contains Err<E>.
      * @returns Value stored in Ok<T> or return value of @p fn.
      */
-    OkValueType unwrapOrElse(std::function<OkValueType(ErrValueType const&)> fn) const
+    OkTypeValue unwrapOrElse(std::function<OkTypeValue(ErrTypeValue const&)> fn) const
     {
-        return std::visit(detail::UnwrapVisitor<OkType, ErrType>(fn), m_result);
+        return m_fnAllNotVoid.unwrapOrElse(fn);
     }
+
 private:
-    OutcomeType m_result;
+    Outcome                      m_outcome;
+    detail::FuncBase<T, E>       m_fnBase;
+    detail::FuncOkNotVoid<T, E>  m_fnOkNotVoid;
+    detail::FuncErrNotVoid<T, E> m_fnErrNotVoid;
+    detail::FuncAllNotVoid<T, E> m_fnAllNotVoid;
+};
+
+/**
+ * @brief Alternative to exception based error handling.
+ * @tparam E   Type associated with a failed Result.
+ */
+template<typename E>
+class Result<void, E>
+{
+public:
+    /// @brief Type holding a successful result.
+    using OkType = Ok<void>;
+    /// @brief Value type contained in faulty results.
+    using ErrTypeValue = E;
+    /// @brief Type holding a failed result.
+    using ErrType = Err<ErrTypeValue>;
+    /// @brief Type holding a either and successful or a failed result.
+    using Outcome = std::variant<OkType, ErrType>;
+
+    /**
+     * @brief Construct Result.
+     * @param[in] outcome   Either Ok<T> indicating as successful result
+     *                      or Err<E> in case of a failed result.
+     */
+    explicit Result(Outcome outcome)
+        : m_outcome(std::move(outcome))
+        , m_fnBase(m_outcome)
+        , m_fnErrNotVoid(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Accessors to the internal variant holding the Results Outcome.
+     * @returns const ref to internal outcome.
+     */
+    Outcome const& getOutcome(void) const
+    {
+        return m_fnBase.getOutcome();
+    }
+
+    /**
+     * @brief Check if result contains a success value.
+     * @returns true in case the Result contains a success, otherwise false.
+     */
+    bool isOk(void) const
+    {
+        return m_fnBase.isOk();
+    }
+
+    /**
+     * @brief Check if result contains an error value.
+     * @returns true in case the Result contains an error, otherwise false.
+     */
+    bool isErr(void) const
+    {
+        return m_fnBase.isErr();
+    }
+
+    /**
+     * @brief Get stored error value.
+     * @returns std::optional<E> holding the value stored in Err<E>, if
+     *          the result holds Err<E>. Otherwise std::nullopt is returned.
+     */
+    std::optional<ErrTypeValue> getErr(void) const
+    {
+        return m_fnErrNotVoid.getErr();
+    }
+
+    /**
+     * @brief Get value stored in Err<E> (held by the Result) directly.
+     * @note Terminates application in case the result holds an Ok<T>.
+     */
+    ErrTypeValue unwrapErr(void) const
+    {
+        return m_fnErrNotVoid.unwrapErr();
+    }
+
+private:
+    Outcome                         m_outcome;
+    detail::FuncBase<void, E>       m_fnBase;
+    detail::FuncErrNotVoid<void, E> m_fnErrNotVoid;
+};
+
+/**
+ * @brief Alternative to exception based error handling.
+ * @tparam T   Type associated with a successful Result.
+ */
+template<typename T>
+class Result<T, void>
+{
+public:
+    /// @brief Value type contained in successful results.
+    using OkTypeValue = T;
+    /// @brief Type holding a successful result.
+    using OkType = Ok<OkTypeValue>;
+    /// @brief Type holding a failed result.
+    using ErrType = Err<void>;
+    /// @brief Type holding a either and successful or a failed result.
+    using Outcome = std::variant<OkType, ErrType>;
+
+    /**
+     * @brief Construct Result.
+     * @param[in] outcome   Either Ok<T> indicating as successful result
+     *                      or Err<E> in case of a failed result.
+     */
+    explicit Result(Outcome outcome)
+        : m_outcome(std::move(outcome))
+        , m_fnBase(m_outcome)
+        , m_fnOkNotVoid(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Accessors to the internal variant holding the Results Outcome.
+     * @returns const ref to internal outcome.
+     */
+    Outcome const& getOutcome(void) const
+    {
+        return m_fnBase.getOutcome();
+    }
+
+    /**
+     * @brief Check if result contains a success value.
+     * @returns true in case the Result contains a success, otherwise false.
+     */
+    bool isOk(void) const
+    {
+        return m_fnBase.isOk();
+    }
+
+    /**
+     * @brief Check if result contains an error value.
+     * @returns true in case the Result contains an error, otherwise false.
+     */
+    bool isErr(void) const
+    {
+        return m_fnBase.isErr();
+    }
+
+    /**
+     * @brief Get stored success value.
+     * @returns std::optional<T> holding the value stored in Ok<T>, if
+     *          the result holds Ok<T>. Otherwise std::nullopt is returned.
+     */
+    std::optional<OkTypeValue> getOk(void) const
+    {
+        return m_fnOkNotVoid.getOk();
+    }
+
+    /**
+     * @brief Get value stored in Ok<T> (held by the Result) directly.
+     * @note Terminates application in case the result holds an Err<E>.
+     */
+    OkTypeValue unwrap(void) const
+    {
+        return m_fnOkNotVoid.unwrap();
+    }
+
+    /**
+     * @brief Get value stored in Ok<T> (held by the Result) or return given default value.
+     * @param[in] val   Default value if result holds Err<E> instead of Ok<T>.
+     * @returns Value stored in Ok<T> or @p val.
+     */
+    OkTypeValue unwrapOrDefault(OkTypeValue const& val) const
+    {
+        return m_fnOkNotVoid.unwrapOrDefault(val);
+    }
+
+private:
+    Outcome                        m_outcome;
+    detail::FuncBase<T, void>      m_fnBase;
+    detail::FuncOkNotVoid<T, void> m_fnOkNotVoid;
+};
+
+/**
+ * @brief Alternative to exception based error handling.
+ */
+template<>
+class Result<void, void>
+{
+public:
+    /// @brief Type holding a successful result.
+    using OkType = Ok<void>;
+    /// @brief Type holding a failed result.
+    using ErrType = Err<void>;
+    /// @brief Type holding a either and successful or a failed result.
+    using Outcome = std::variant<OkType, ErrType>;
+
+    /**
+     * @brief Construct Result.
+     * @param[in] outcome   Either Ok<T> indicating as successful result
+     *                      or Err<E> in case of a failed result.
+     */
+    explicit Result(Outcome outcome)
+        : m_outcome(std::move(outcome))
+        , m_fnBase(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Accessors to the internal variant holding the Results Outcome.
+     * @returns const ref to internal outcome.
+     */
+    Outcome const& getOutcome(void) const
+    {
+        return m_fnBase.getOutcome();
+    }
+
+    /**
+     * @brief Check if result contains a success value.
+     * @returns true in case the Result contains a success, otherwise false.
+     */
+    bool isOk(void) const
+    {
+        return m_fnBase.isOk();
+    }
+
+    /**
+     * @brief Check if result contains an error value.
+     * @returns true in case the Result contains an error, otherwise false.
+     */
+    bool isErr(void) const
+    {
+        return m_fnBase.isErr();
+    }
+
+private:
+    Outcome                      m_outcome;
+    detail::FuncBase<void, void> m_fnBase;
 };
 
 /**
@@ -183,14 +417,21 @@ private:
 template<typename T, typename E>
 bool operator == (Result<T, E> const& lhs, Result<T, E> const& rhs)
 {
-    auto lhsOk = lhs.isOk();
-    if (lhsOk == rhs.isOk())
+    auto lhsIsOk = lhs.isOk();
+    if (lhsIsOk == rhs.isOk())
     {
-        if (lhsOk)
+        using OkType = typename Result<T, E>::OkType;
+        using ErrType = typename Result<T, E>::ErrType;
+
+        if (lhsIsOk)
         {
-            return (lhs.unwrap() == rhs.unwrap());
+            auto const& lhsOk = std::get<OkType>(lhs.getOutcome());
+            auto const& rhsOk = std::get<OkType>(rhs.getOutcome());
+            return (lhsOk == rhsOk);
         }
-        return (lhs.unwrapErr() == rhs.unwrapErr());
+        auto const& lhsErr = std::get<ErrType>(lhs.getOutcome());
+        auto const& rhsErr = std::get<ErrType>(rhs.getOutcome());
+        return (lhsErr == rhsErr);
     }
     return false;
 }

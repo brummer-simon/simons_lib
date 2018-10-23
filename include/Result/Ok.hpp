@@ -42,7 +42,6 @@
 #define OK_HPP_20180923151521
 
 #include <type_traits>
-#include "../NullTypes/NullObjImpl.hpp"
 
 namespace simons_lib::result
 {
@@ -51,7 +50,7 @@ namespace simons_lib::result
  * @brief Type holding a successful result.
  * @tparam T   Type contained within the successful result.
  */
-template<typename T = simons_lib::null_types::NullObj>
+template<typename T>
 class Ok
 {
 public:
@@ -119,6 +118,14 @@ private:
 };
 
 /**
+ * @brief Type indicating a successful Result but contains no value.
+ */
+template <>
+class Ok<void>
+{
+};
+
+/**
  * @brief Compare two successful outcomes for equality.
  * @tparam T   Type contained in a successful result.
  * @param[in] lhs   left hand side of operator.
@@ -128,7 +135,14 @@ private:
 template<typename T>
 bool operator == (Ok<T> const& lhs, Ok<T> const& rhs)
 {
-    return lhs.getConstRef() == rhs.getConstRef();
+    if constexpr (std::is_void<T>::value)
+    {
+        return true;
+    }
+    else
+    {
+        return lhs.getConstRef() == rhs.getConstRef();
+    }
 }
 
 /**

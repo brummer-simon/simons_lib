@@ -31,6 +31,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <Defines.hpp>
 #include <Result.hpp>
 #include <NullTypes/NullObjImpl.hpp>
 
@@ -38,10 +39,10 @@ using namespace simons_lib::result;
 using simons_lib::null_types::NullObj;
 
 // Tests for results success type
-TEST(OkTest, behavior)
+TEST(OkTest, Behavior)
 {
     // Construct Ok with different types and values. Compare results.
-    ASSERT_EQ(Ok<>(),                  Ok<>());
+    ASSERT_EQ(Ok<void>(),              Ok<void>());
     ASSERT_EQ(Ok<NullObj>(NullObj()),  Ok<NullObj>(NullObj()));
     ASSERT_EQ(Ok<int>(-1),             Ok<int>(-1));
     ASSERT_EQ(Ok<unsigned>(1),         Ok<unsigned>(1));
@@ -65,11 +66,29 @@ TEST(OkTest, behavior)
     ASSERT_EQ(toTest.getConstRef(), 23);
 }
 
+TEST(OkTest, operator_equality)
+{
+    ASSERT_EQ(Ok<void>()              == Ok<void>(), true);
+    ASSERT_EQ(Ok<int>(0)              == Ok<int>(0), true);
+    ASSERT_EQ(Ok<int>(0)              == Ok<int>(1), false);
+    ASSERT_EQ(Ok<char const *>("Foo") == Ok<char const *>("Foo"), true);
+    ASSERT_EQ(Ok<char const *>("Foo") == Ok<char const *>("Bar"), false);
+}
+
+TEST(OkTest, operator_inequality)
+{
+    ASSERT_EQ(Ok<void>()              != Ok<void>(), false);
+    ASSERT_EQ(Ok<int>(0)              != Ok<int>(0), false);
+    ASSERT_EQ(Ok<int>(0)              != Ok<int>(1), true);
+    ASSERT_EQ(Ok<char const *>("Foo") != Ok<char const *>("Foo"), false);
+    ASSERT_EQ(Ok<char const *>("Foo") != Ok<char const *>("Bar"), true);
+}
+
 // Tests for results error type
-TEST(ErrTest, behavior)
+TEST(ErrTest, Behavior)
 {
     // Construct Err with different types and values. Compare results.
-    ASSERT_EQ(Err<>(),                  Err<>());
+    ASSERT_EQ(Err<void>(),              Err<void>());
     ASSERT_EQ(Err<NullObj>(NullObj()),  Err<NullObj>(NullObj()));
     ASSERT_EQ(Err<int>(-1),             Err<int>(-1));
     ASSERT_EQ(Err<unsigned>(1),         Err<unsigned>(1));
@@ -93,111 +112,496 @@ TEST(ErrTest, behavior)
     ASSERT_EQ(toTest.getConstRef(), 23);
 }
 
+TEST(ErrTest, operator_equality)
+{
+    ASSERT_EQ(Err<void>()              == Err<void>(), true);
+    ASSERT_EQ(Err<int>(0)              == Err<int>(0), true);
+    ASSERT_EQ(Err<int>(0)              == Err<int>(1), false);
+    ASSERT_EQ(Err<char const *>("Foo") == Err<char const *>("Foo"), true);
+    ASSERT_EQ(Err<char const *>("Foo") == Err<char const *>("Bar"), false);
+}
+
+TEST(ErrTest, operator_inequality)
+{
+    ASSERT_EQ(Err<void>()              != Err<void>(), false);
+    ASSERT_EQ(Err<int>(0)              != Err<int>(0), false);
+    ASSERT_EQ(Err<int>(0)              != Err<int>(1), true);
+    ASSERT_EQ(Err<char const *>("Foo") != Err<char const *>("Foo"), false);
+    ASSERT_EQ(Err<char const *>("Foo") != Err<char const *>("Bar"), true);
+}
+
 // Tests for result type
 TEST(ResultTest, isOk)
 {
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.isOk(), true);
+    // Test isOk() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.isOk(), true);
+    }
+    {
+        auto ok = Result<int, void>(Ok<int>(0));
+        ASSERT_EQ(ok.isOk(), true);
+    }
+    {
+        auto ok = Result<void, int>(Ok<void>());
+        ASSERT_EQ(ok.isOk(), true);
+    }
+    {
+        auto ok = Result<void, void>(Ok<void>());
+        ASSERT_EQ(ok.isOk(), true);
+    }
 
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.isOk(), false);
+    // Test isOk() for all specializations of Err<T>
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.isOk(), false);
+    }
+    {
+        auto err = Result<int, void>(Err<void>());
+        ASSERT_EQ(err.isOk(), false);
+    }
+    {
+        auto err = Result<void, int>(Err<int>(0));
+        ASSERT_EQ(err.isOk(), false);
+    }
+    {
+        auto err = Result<void, void>(Err<void>());
+        ASSERT_EQ(err.isOk(), false);
+    }
 }
 
 TEST(ResultTest, isErr)
 {
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.isErr(), true);
+    // Test isErr() for all specializations of Err<T>
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.isErr(), true);
+    }
+    {
+        auto err = Result<int, void>(Err<void>());
+        ASSERT_EQ(err.isErr(), true);
+    }
+    {
+        auto err = Result<void, int>(Err<int>(0));
+        ASSERT_EQ(err.isErr(), true);
+    }
+    {
+        auto err = Result<void, void>(Err<void>());
+        ASSERT_EQ(err.isErr(), true);
+    }
 
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.isErr(), false);
+    // Test isErr() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.isErr(), false);
+    }
+    {
+        auto ok = Result<int, void>(Ok<int>(0));
+        ASSERT_EQ(ok.isErr(), false);
+    }
+    {
+        auto ok = Result<void, int>(Ok<void>());
+        ASSERT_EQ(ok.isErr(), false);
+    }
+    {
+        auto ok = Result<void, void>(Ok<void>());
+        ASSERT_EQ(ok.isErr(), false);
+    }
 }
 
 TEST(ResultTest, getOk)
 {
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.getOk(), std::optional<int>(0));
-    ASSERT_EQ(ok.getOk(), 0);
+    // Test getOk() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.getOk(), 0);
+    }
+    {
+        auto ok = Result<int, void>(Ok<int>(0));
+        ASSERT_EQ(ok.getOk(), 0);
+    }
 
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.getOk(), std::nullopt);
+    // Test getOk() for all specializations of Err<E>
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.getOk(), std::nullopt);
+    }
+    {
+        auto err = Result<int, void>(Err<void>());
+        ASSERT_EQ(err.getOk(), std::nullopt);
+    }
+
+    // Commenting in getOk() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<void, int>(Ok<void>());
+        //ok.getOk();
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.getOk();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, int>(Err<int>(0));
+        //err.getOk();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.getOk();
+    }
 }
 
 TEST(ResultTest, getErr)
 {
+    // Test getErr() for all specializations of Err<E>
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.getErr(), 0);
+    }
+    {
+        auto err = Result<void, int>(Err<int>(0));
+        ASSERT_EQ(err.getErr(), 0);
+    }
 
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.getErr(), std::optional<int>(0));
-    ASSERT_EQ(err.getErr(), 0);
+    // Test getErr() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.getErr(), std::nullopt);
+    }
+    {
+        auto ok = Result<void, int>(Ok<void>());
+        ASSERT_EQ(ok.getErr(), std::nullopt);
+    }
 
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.getErr(), std::nullopt);
+    // Commenting in getOk() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<int, void>(Ok<int>(0));
+        //ok.getErr();
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.getErr();
+    }
+    {
+        [[maybe_unused]] auto err = Result<int, void>(Err<void>());
+        //err.getErr();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.getErr();
+    }
 }
 
 TEST(ResultTest, unwrap)
 {
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.unwrap(), 0);
-    // ASSERT_EQ(ok.unwrapErr(), 0);
+    // Test unwrap() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.unwrap(), 0);
+    }
+    {
+        auto ok = Result<int, void>(Ok<int>(0));
+        ASSERT_EQ(ok.unwrap(), 0);
+    }
+
+    // Commenting in unwrap() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<void, int>(Ok<void>());
+        //ok.unwrap();
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.unwrap();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, int>(Err<int>(0));
+        //err.unwrap();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.unwrap();
+    }
+}
+
+TEST(ResultDeathTest, unwrap)
+{
+#ifndef SIMONS_LIB_DISABLE_EXIT
+    // Test unwrap() for all specializations of Err<E>. Those must lead to a hard abort
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_DEATH(err.unwrap(), "");
+    }
+    {
+        auto err = Result<int, void>(Err<void>());
+        ASSERT_DEATH(err.unwrap(), "");
+    }
+#endif
 }
 
 TEST(ResultTest, unwrapErr)
 {
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.unwrapErr(), 0);
-    // ASSERT_EQ(err.unwrap(), 0);
+    // Test unwrapErr() for all specializations of Err<T>
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.unwrapErr(), 0);
+    }
+    {
+        auto err = Result<void, int>(Err<int>(0));
+        ASSERT_EQ(err.unwrapErr(), 0);
+    }
+
+    // Commenting in unwrap() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<int, void>(Ok<int>(0));
+        //ok.unwrapErr();
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.unwrapErr();
+    }
+    {
+        [[maybe_unused]] auto err = Result<int, void>(Err<void>());
+        //err.unwrapErr();
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.unwrapErr();
+    }
+}
+
+TEST(ResultDeathTest, unwrapErr)
+{
+#ifndef SIMONS_LIB_DISABLE_EXIT
+    // Test unwrapErr() for all specializations of Ok<T>. Those must lead to a hard abort
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_DEATH(ok.unwrapErr(), "");
+    }
+    {
+        auto ok = Result<void, int>(Ok<void>());
+        ASSERT_DEATH(ok.unwrapErr(), "");
+    }
+#endif
 }
 
 TEST(ResultTest, unwrapOrDefault)
 {
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.unwrapOrDefault(0), 0);
+    // Test unwrapOrDefault() for all specializations of Ok<T>
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.unwrapOrDefault(1), 0);
+    }
+    {
+        auto ok = Result<int, void>(Ok<int>(0));
+        ASSERT_EQ(ok.unwrapOrDefault(1), 0);
+    }
 
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.unwrapOrDefault(1), 1);
+    // Test unwrapOrDefault() for all specializations of Err<E>.
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.unwrapOrDefault(1), 1);
+    }
+    {
+        auto err = Result<int, void>(Err<void>());
+        ASSERT_EQ(err.unwrapOrDefault(1), 1);
+    }
+
+    // Commenting in unwrapOrDefault() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<void, int>(Ok<void>());
+        //ok.unwrapOrDefault(0);
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.unwrapOrDefault(0);
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, int>(Err<int>(0));
+        //err.unwrapOrDefault(0);
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.unwrapOrDefault(0);
+    }
 }
 
 TEST(ResultTest, unwrapOrElse)
 {
     auto fn = [] (int const& i)
     {
-        return i +1;
+        return i + 1;
     };
 
-    auto ok = Result<int, int>(Ok<int>(0));
-    ASSERT_EQ(ok.unwrapOrElse(fn), 0);
+    // Test unwrapOrElse() Ok<T> and Err<E> where T,E is non void
+    {
+        auto ok = Result<int, int>(Ok<int>(0));
+        ASSERT_EQ(ok.unwrapOrElse(fn), 0);
+    }
+    {
+        auto err = Result<int, int>(Err<int>(0));
+        ASSERT_EQ(err.unwrapOrElse(fn), 1);
+    }
 
-    auto err = Result<int, int>(Err<int>(0));
-    ASSERT_EQ(err.unwrapOrElse(fn), 1);
+    // Commenting in unwrapOrElse() must lead to compilation errors
+    {
+        [[maybe_unused]] auto ok = Result<void, int>(Ok<void>());
+        //ok.unwrapOrElse(fn);
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, int>(Err<int>(0));
+        //err.unwrapOrElse(fn);
+    }
+    {
+        [[maybe_unused]] auto ok = Result<int, void>(Ok<int>(0));
+        //ok.unwrapOrElse();
+    }
+    {
+        [[maybe_unused]] auto err = Result<int, void>(Err<void>());
+        //err.unwrapOrElse();
+    }
+    {
+        [[maybe_unused]] auto ok = Result<void, void>(Ok<void>());
+        //ok.unwrapOrElse(fn);
+    }
+    {
+        [[maybe_unused]] auto err = Result<void, void>(Err<void>());
+        //err.unwrapOrElse(fn);
+    }
 }
 
 TEST(ResultTest, operator_equality)
 {
-    auto ok0 = Result<int, int>(Ok<int>(0));
-    auto ok1 = Result<int, int>(Ok<int>(1));
-    auto err0 = Result<int, int>(Err<int>(0));
-    auto err1 = Result<int, int>(Err<int>(1));
+    {
+        auto ok  = Result<void, void>(Ok<void>());
+        auto err = Result<void, void>(Err<void>());
 
-    ASSERT_EQ(ok0 == ok0, true);
-    ASSERT_EQ(err0 == err0, true);
+        ASSERT_EQ(ok == ok,  true);
+        ASSERT_EQ(ok == err, false);
+    }
+    {
+        auto ok   = Result<void, int>(Ok<void>());
+        auto err0 = Result<void, int>(Err<int>(0));
+        auto err1 = Result<void, int>(Err<int>(1));
 
-    ASSERT_EQ(ok0 == ok1, false);
-    ASSERT_EQ(err0 == err1, false);
-    ASSERT_EQ(ok0 == err0, false);
-    ASSERT_EQ(err0 == ok0, false);
+        ASSERT_EQ(ok == ok,     true);
+        ASSERT_EQ(err0 == err0, true);
+        ASSERT_EQ(err1 == err1, true);
+
+        ASSERT_EQ(ok == err0,   false);
+        ASSERT_EQ(ok == err1,   false);
+        ASSERT_EQ(err0 == ok,   false);
+        ASSERT_EQ(err0 == err1, false);
+        ASSERT_EQ(err1 == ok,   false);
+        ASSERT_EQ(err1 == err0, false);
+    }
+
+    {
+        auto ok0 = Result<int, void>(Ok<int>(0));
+        auto ok1 = Result<int, void>(Ok<int>(1));
+        auto err = Result<int, void>(Err<void>());
+
+        ASSERT_EQ(ok0 == ok0, true);
+        ASSERT_EQ(ok1 == ok1, true);
+        ASSERT_EQ(err == err, true);
+
+        ASSERT_EQ(ok0 == err, false);
+        ASSERT_EQ(ok0 == ok1, false);
+        ASSERT_EQ(ok1 == ok0, false);
+        ASSERT_EQ(ok1 == err, false);
+        ASSERT_EQ(err == ok0, false);
+        ASSERT_EQ(err == ok1, false);
+    }
+
+        {
+        auto ok0  = Result<int, int>(Ok<int>(0));
+        auto ok1  = Result<int, int>(Ok<int>(1));
+        auto err0 = Result<int, int>(Err<int>(0));
+        auto err1 = Result<int, int>(Err<int>(1));
+
+        ASSERT_EQ(ok0 == ok0,   true);
+        ASSERT_EQ(ok1 == ok1,   true);
+        ASSERT_EQ(err0 == err0, true);
+        ASSERT_EQ(err1 == err1, true);
+
+        ASSERT_EQ(ok0 == ok1,   false);
+        ASSERT_EQ(ok0 == err0,  false);
+        ASSERT_EQ(ok0 == err1,  false);
+        ASSERT_EQ(ok1 == ok0,   false);
+        ASSERT_EQ(ok1 == err0,  false);
+        ASSERT_EQ(ok1 == err1,  false);
+        ASSERT_EQ(err0 == ok0,  false);
+        ASSERT_EQ(err0 == ok1,  false);
+        ASSERT_EQ(err0 == err1, false);
+        ASSERT_EQ(err1 == ok0,  false);
+        ASSERT_EQ(err1 == ok1,  false);
+        ASSERT_EQ(err1 == err0, false);
+    }
 }
 
 TEST(ResultTest, operator_inequality)
 {
-    auto ok0 = Result<int, int>(Ok<int>(0));
-    auto ok1 = Result<int, int>(Ok<int>(1));
-    auto err0 = Result<int, int>(Err<int>(0));
-    auto err1 = Result<int, int>(Err<int>(1));
+    {
+        auto ok  = Result<void, void>(Ok<void>());
+        auto err = Result<void, void>(Err<void>());
 
-    ASSERT_EQ(ok0 != ok0, false);
-    ASSERT_EQ(err0 != err0, false);
+        ASSERT_EQ(ok != ok,  false);
+        ASSERT_EQ(ok != err, true);
+    }
+    {
+        auto ok   = Result<void, int>(Ok<void>());
+        auto err0 = Result<void, int>(Err<int>(0));
+        auto err1 = Result<void, int>(Err<int>(1));
 
-    ASSERT_EQ(ok0 != ok1, true);
-    ASSERT_EQ(err0 != err1, true);
-    ASSERT_EQ(ok0 != err0, true);
-    ASSERT_EQ(err0 != ok0, true);
+        ASSERT_EQ(ok != ok,     false);
+        ASSERT_EQ(err0 != err0, false);
+        ASSERT_EQ(err1 != err1, false);
+
+        ASSERT_EQ(ok != err0,   true);
+        ASSERT_EQ(ok != err1,   true);
+        ASSERT_EQ(err0 != ok,   true);
+        ASSERT_EQ(err0 != err1, true);
+        ASSERT_EQ(err1 != ok,   true);
+        ASSERT_EQ(err1 != err0, true);
+    }
+
+    {
+        auto ok0 = Result<int, void>(Ok<int>(0));
+        auto ok1 = Result<int, void>(Ok<int>(1));
+        auto err = Result<int, void>(Err<void>());
+
+        ASSERT_EQ(ok0 != ok0, false);
+        ASSERT_EQ(ok1 != ok1, false);
+        ASSERT_EQ(err != err, false);
+
+        ASSERT_EQ(ok0 != err, true);
+        ASSERT_EQ(ok0 != ok1, true);
+        ASSERT_EQ(ok1 != ok0, true);
+        ASSERT_EQ(ok1 != err, true);
+        ASSERT_EQ(err != ok0, true);
+        ASSERT_EQ(err != ok1, true);
+    }
+
+    {
+        auto ok0  = Result<int, int>(Ok<int>(0));
+        auto ok1  = Result<int, int>(Ok<int>(1));
+        auto err0 = Result<int, int>(Err<int>(0));
+        auto err1 = Result<int, int>(Err<int>(1));
+
+        ASSERT_EQ(ok0 != ok0,   false);
+        ASSERT_EQ(ok1 != ok1,   false);
+        ASSERT_EQ(err0 != err0, false);
+        ASSERT_EQ(err1 != err1, false);
+
+        ASSERT_EQ(ok0 != ok1,   true);
+        ASSERT_EQ(ok0 != err0,  true);
+        ASSERT_EQ(ok0 != err1,  true);
+        ASSERT_EQ(ok1 != ok0,   true);
+        ASSERT_EQ(ok1 != err0,  true);
+        ASSERT_EQ(ok1 != err1,  true);
+        ASSERT_EQ(err0 != ok0,  true);
+        ASSERT_EQ(err0 != ok1,  true);
+        ASSERT_EQ(err0 != err1, true);
+        ASSERT_EQ(err1 != ok0,  true);
+        ASSERT_EQ(err1 != ok1,  true);
+        ASSERT_EQ(err1 != err0, true);
+    }
 }
