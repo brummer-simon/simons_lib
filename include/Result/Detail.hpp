@@ -47,6 +47,7 @@
 #ifndef DETAIL_HPP_20180923151521
 #define DETAIL_HPP_20180923151521
 
+#include <variant>
 #include <optional>
 #include <functional>
 #include "Ok.hpp"
@@ -78,23 +79,26 @@ namespace simons_lib::result::detail
 #endif
 }
 
-template<typename T, typename E>
-struct IsVisitor
+// Shared visitor functors
+template<typename TrueType>
+struct IsTypeVisitor
 {
-    bool operator () (T const&) const
+    bool operator () (TrueType const&)
     {
         return true;
     }
 
-    bool operator () (E const&) const
+    template<typename FalseType>
+    bool operator () (FalseType const&)
     {
         return false;
     }
 };
 
-template<typename T, typename E>
-struct GetVisitor
+template<typename T>
+class GetValueVisitor
 {
+public:
     using ReturnType = typename T::ValueType;
 
     std::optional<ReturnType> operator () (T const& val) const
@@ -102,6 +106,7 @@ struct GetVisitor
         return val.getValue();
     }
 
+    template<typename E>
     std::optional<ReturnType> operator () (E const&) const
     {
         return std::nullopt;
@@ -109,28 +114,124 @@ struct GetVisitor
 };
 
 template<typename T, typename E>
-struct UnwrapVisitor
+class FuncBase
 {
-    using ReturnType = typename T::ValueType;
-    using ErrorType = typename E::ValueType;
-    using FuncType = std::function<ReturnType(ErrorType const&)>;
+public:
+    using Outcome = std::variant<Ok<T>, Err<E>>;
 
-    UnwrapVisitor(FuncType f)
-        : m_f(f)
+    FuncBase(Outcome const& outcome)
+        : m_outcome(outcome)
     {
     }
 
-    ReturnType operator () (T const& val) const
+    Outcome const& getOutcome(void) const
     {
-        return val.getValue();
+        return m_outcome;
     }
 
-    ReturnType operator () (E const& val) const
+    bool isOk(void) const
     {
-        return m_f(val.getConstRef());
+        return std::visit(IsTypeVisitor<Ok<T>>(), m_outcome);
     }
 
-    FuncType m_f;
+    bool isErr(void) const
+    {
+        return std::visit(IsTypeVisitor<Err<E>>(), m_outcome);
+    }
+
+private:
+    Outcome const& m_outcome;
+};
+
+template<typename T, typename E>
+class FuncOkNotVoid
+{
+public:
+    using Outcome = std::variant<Ok<T>, Err<E>>;
+
+    FuncOkNotVoid(Outcome const& outcome)
+        : m_outcome(outcome)
+    {
+    }
+
+    std::optional<T> getOk(void) const
+    {
+        return std::visit(GetValueVisitor<Ok<T>>(), m_outcome);
+    }
+
+    T unwrap(void) const
+    {
+        if (std::visit(IsTypeVisitor<Err<E>>(), m_outcome))
+        {
+            abort("Critical Error: unwrap() contained Err");
+        }
+        return std::get<Ok<T>>(m_outcome).getValue();
+    }
+
+    T unwrapOrDefault(T const& val) const
+    {
+        if (std::visit(IsTypeVisitor<Err<E>>(), m_outcome))
+        {
+            return val;
+        }
+        return std::get<Ok<T>>(m_outcome).getValue();
+    }
+
+private:
+    Outcome const& m_outcome;
+};
+
+template<typename T, typename E>
+class FuncErrNotVoid
+{
+public:
+    using Outcome = std::variant<Ok<T>, Err<E>>;
+
+    FuncErrNotVoid(Outcome const& outcome)
+        : m_outcome(outcome)
+    {
+    }
+
+    std::optional<E> getErr(void) const
+    {
+        return std::visit(GetValueVisitor<Err<E>>(), m_outcome);
+    }
+
+    E unwrapErr(void) const
+    {
+        if (std::visit(IsTypeVisitor<Ok<T>>(), m_outcome))
+        {
+            abort("Critical Error: unwrapErr() contained Ok");
+        }
+        return std::get<Err<E>>(m_outcome).getValue();
+    }
+
+private:
+    Outcome const& m_outcome;
+};
+
+template<typename T, typename E>
+class FuncAllNotVoid
+{
+public:
+    using Outcome = std::variant<Ok<T>, Err<E>>;
+
+    FuncAllNotVoid(Outcome const& outcome)
+        : m_outcome(outcome)
+    {
+    }
+
+    T unwrapOrElse(std::function<T(E const&)> fn) const
+    {
+        if (std::visit(IsTypeVisitor<Err<T>>(), m_outcome))
+        {
+            return fn(std::get<Err<E>>(m_outcome).getConstRef());
+        }
+        return std::get<Ok<T>>(m_outcome).getValue();
+    }
+
+private:
+    Outcome const& m_outcome;
 };
 
 } // namespace simons_lib::result::detail

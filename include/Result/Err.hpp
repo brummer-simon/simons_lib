@@ -41,7 +41,7 @@
 #ifndef ERR_HPP_20180923151521
 #define ERR_HPP_20180923151521
 
-#include "../NullTypes/NullObjImpl.hpp"
+#include <type_traits>
 
 namespace simons_lib::result
 {
@@ -50,7 +50,7 @@ namespace simons_lib::result
  * @brief Type holding a failed result.
  * @tparam E   Type contained within the failed result.
  */
-template<typename E = simons_lib::null_types::NullObj>
+template<typename E>
 class Err
 {
 public:
@@ -118,6 +118,14 @@ private:
 };
 
 /**
+ * @brief Type indicating a failed Result but contains no error value.
+ */
+template <>
+class Err<void>
+{
+};
+
+/**
  * @brief Compare two failed outcomes for equality.
  * @tparam T   Type contained in a failed result.
  * @param[in] lhs   left hand side of operator.
@@ -127,7 +135,14 @@ private:
 template<typename E>
 bool operator == (Err<E> const& lhs, Err<E> const& rhs)
 {
-    return lhs.getConstRef() == rhs.getConstRef();
+    if constexpr (std::is_void<E>::value)
+    {
+        return true;
+    }
+    else
+    {
+        return lhs.getConstRef() == rhs.getConstRef();
+    }
 }
 
 /**
