@@ -65,7 +65,7 @@ namespace simons_lib::result::detail
 {
 // @Note: As soon as this function is called, the program is
 //        in a unrecoverable error state.
-[[noreturn]] void abort([[maybe_unused]] char const *msg)
+[[noreturn]] inline void abort([[maybe_unused]] char const *msg)
 {
 #ifndef SIMONS_LIB_DISABLE_PRINTS
     puts(msg);
