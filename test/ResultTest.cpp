@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <type_traits>
 #include <gtest/gtest.h>
 #include <Defines.hpp>
 #include <Result.hpp>
@@ -37,6 +38,32 @@
 
 using namespace simons_lib::result;
 using simons_lib::null_types::NullObj;
+
+template<typename T, typename E>
+Result<T, E> implcitConvertOk()
+{
+    if constexpr (std::is_same<T, void>::value)
+    {
+        return Ok<void>();
+    }
+    else
+    {
+        return Ok<T>(T());
+    }
+}
+
+template<typename T, typename E>
+Result<T, E> implcitConvertErr()
+{
+    if constexpr (std::is_same<E, void>::value)
+    {
+        return Err<void>();
+    }
+    else
+    {
+        return Err<E>(E());
+    }
+}
 
 // Tests for results success type
 TEST(OkTest, Behavior)
@@ -66,7 +93,7 @@ TEST(OkTest, Behavior)
     ASSERT_EQ(toTest.getConstRef(), 23);
 }
 
-TEST(OkTest, operator_equality)
+TEST(OkTest, operatorEquality)
 {
     ASSERT_EQ(Ok<void>()              == Ok<void>(), true);
     ASSERT_EQ(Ok<int>(0)              == Ok<int>(0), true);
@@ -75,7 +102,7 @@ TEST(OkTest, operator_equality)
     ASSERT_EQ(Ok<char const *>("Foo") == Ok<char const *>("Bar"), false);
 }
 
-TEST(OkTest, operator_inequality)
+TEST(OkTest, operatorInequality)
 {
     ASSERT_EQ(Ok<void>()              != Ok<void>(), false);
     ASSERT_EQ(Ok<int>(0)              != Ok<int>(0), false);
@@ -112,7 +139,7 @@ TEST(ErrTest, Behavior)
     ASSERT_EQ(toTest.getConstRef(), 23);
 }
 
-TEST(ErrTest, operator_equality)
+TEST(ErrTest, operatorEquality)
 {
     ASSERT_EQ(Err<void>()              == Err<void>(), true);
     ASSERT_EQ(Err<int>(0)              == Err<int>(0), true);
@@ -121,7 +148,7 @@ TEST(ErrTest, operator_equality)
     ASSERT_EQ(Err<char const *>("Foo") == Err<char const *>("Bar"), false);
 }
 
-TEST(ErrTest, operator_inequality)
+TEST(ErrTest, operatorInequality)
 {
     ASSERT_EQ(Err<void>()              != Err<void>(), false);
     ASSERT_EQ(Err<int>(0)              != Err<int>(0), false);
@@ -468,7 +495,49 @@ TEST(ResultTest, unwrapOrElse)
     }
 }
 
-TEST(ResultTest, operator_equality)
+TEST(ResultTest, implicitConversionOk)
+{
+    // Test implicit conversion of Ok<T> for all specializations
+    {
+        auto ok = implcitConvertOk<int, int>();
+        ASSERT_TRUE(ok.isOk());
+    }
+    {
+        auto ok = implcitConvertOk<void, int>();
+        ASSERT_TRUE(ok.isOk());
+    }
+    {
+        auto ok = implcitConvertOk<int, void>();
+        ASSERT_TRUE(ok.isOk());
+    }
+    {
+        auto ok = implcitConvertOk<void, void>();
+        ASSERT_TRUE(ok.isOk());
+    }
+}
+
+TEST(ResultTest, implicitConversionErr)
+{
+    // Test implicit conversion of Err<E> for all specializations
+    {
+        auto err = implcitConvertErr<int, int>();
+        ASSERT_TRUE(err.isErr());
+    }
+    {
+        auto err = implcitConvertErr<void, int>();
+        ASSERT_TRUE(err.isErr());
+    }
+    {
+        auto err = implcitConvertErr<int, void>();
+        ASSERT_TRUE(err.isErr());
+    }
+    {
+        auto err = implcitConvertErr<void, void>();
+        ASSERT_TRUE(err.isErr());
+    }
+}
+
+TEST(ResultTest, operatorEquality)
 {
     {
         auto ok  = Result<void, void>(Ok<void>());
@@ -537,7 +606,7 @@ TEST(ResultTest, operator_equality)
     }
 }
 
-TEST(ResultTest, operator_inequality)
+TEST(ResultTest, operatorInequality)
 {
     {
         auto ok  = Result<void, void>(Ok<void>());
