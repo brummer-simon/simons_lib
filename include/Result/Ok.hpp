@@ -90,7 +90,7 @@ public:
      * @brief Get contained value.
      * @returns Copy of contained value.
      */
-    ValueType getValue() const noexcept
+    ValueType getValue(void) const noexcept
     {
         return m_value;
     }
@@ -99,7 +99,7 @@ public:
      * @brief Get const reference to contained value.
      * @returns Const reference to contained value.
      */
-    ConstReference getConstRef() const noexcept
+    ConstReference getConstRef(void) const noexcept
     {
         return m_value;
     }
@@ -108,7 +108,7 @@ public:
      * @brief Get reference to contained value.
      * @returns Reference to contained value.
      */
-    Reference getRef() noexcept
+    Reference getRef(void) noexcept
     {
         return m_value;
     }

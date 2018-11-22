@@ -75,12 +75,30 @@ public:
      * @param[in] outcome   Either Ok<T> indicating as successful result
      *                      or Err<E> in case of a failed result.
      */
-    explicit Result(Outcome outcome)
+    explicit Result(Outcome outcome) noexcept
         : m_outcome(std::move(outcome))
         , m_fnBase(m_outcome)
         , m_fnOkNotVoid(m_outcome)
         , m_fnErrNotVoid(m_outcome)
         , m_fnAllNotVoid(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Ok<T> implicitly to Result<T, E>.
+     * @param[in] ok   Positive outcome to build result from.
+     */
+    Result(OkType ok) noexcept
+        : Result(static_cast<Outcome>(ok))
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Err<E> implicitly to Result<T, E>.
+     * @param[in] err   Negative outcome to build result.
+     */
+    Result(ErrType err) noexcept
+        : Result(static_cast<Outcome>(err))
     {
     }
 
@@ -199,10 +217,28 @@ public:
      * @param[in] outcome   Either Ok<T> indicating as successful result
      *                      or Err<E> in case of a failed result.
      */
-    explicit Result(Outcome outcome)
+    explicit Result(Outcome outcome) noexcept
         : m_outcome(std::move(outcome))
         , m_fnBase(m_outcome)
         , m_fnErrNotVoid(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Ok<T> implicitly to Result<T, E>.
+     * @param[in] ok   Positive outcome to build result from.
+     */
+    Result(OkType ok) noexcept
+        : Result(static_cast<Outcome>(ok))
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Err<E> implicitly to Result<T, E>.
+     * @param[in] err   Negative outcome to build result.
+     */
+    Result(ErrType err) noexcept
+        : Result(static_cast<Outcome>(err))
     {
     }
 
@@ -280,10 +316,28 @@ public:
      * @param[in] outcome   Either Ok<T> indicating as successful result
      *                      or Err<E> in case of a failed result.
      */
-    explicit Result(Outcome outcome)
+    explicit Result(Outcome outcome) noexcept
         : m_outcome(std::move(outcome))
         , m_fnBase(m_outcome)
         , m_fnOkNotVoid(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Ok<T> implicitly to Result<T, E>.
+     * @param[in] ok   Positive outcome to build result from.
+     */
+    Result(OkType ok) noexcept
+        : Result(static_cast<Outcome>(ok))
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Err<E> implicitly to Result<T, E>.
+     * @param[in] err   Negative outcome to build result.
+     */
+    Result(ErrType err) noexcept
+        : Result(static_cast<Outcome>(err))
     {
     }
 
@@ -368,9 +422,27 @@ public:
      * @param[in] outcome   Either Ok<T> indicating as successful result
      *                      or Err<E> in case of a failed result.
      */
-    explicit Result(Outcome outcome)
+    explicit Result(Outcome outcome) noexcept
         : m_outcome(std::move(outcome))
         , m_fnBase(m_outcome)
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Ok<T> implicitly to Result<T, E>.
+     * @param[in] ok   Positive outcome to build result from.
+     */
+    Result(OkType ok) noexcept
+        : Result(static_cast<Outcome>(ok))
+    {
+    }
+
+    /**
+     * @brief Conversion Constructor. Converts Err<E> implicitly to Result<T, E>.
+     * @param[in] err   Negative outcome to build result.
+     */
+    Result(ErrType err) noexcept
+        : Result(static_cast<Outcome>(err))
     {
     }
 
