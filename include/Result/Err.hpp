@@ -67,21 +67,20 @@ public:
     explicit Err(void) noexcept
         : m_value()
     {
-        static_assert( std::is_nothrow_default_constructible<ValueType>::value
-                     , "Err<E>: E must be nothrow_default_constructible."
-                     );
+        static_assert(std::is_nothrow_default_constructible<ValueType>::value);
     }
 
     /**
      * @brief Constructs a failed Result.
-     * @note Type of @p value must be no-throw move constructible.
+     * @note Type of @p value must be either no-throw-move-construct able
+     *       or no-throw-copy-construct able.
      * @param[in] value   Error value contained within the failed result.
      */
-    explicit Err(ValueType value) noexcept
-        : m_value(std::move(value))
+    explicit Err(ValueType&& value) noexcept
+        : m_value(std::forward<decltype(value)>(value))
     {
         static_assert( std::is_nothrow_move_constructible<ValueType>::value
-                     , "Err<E>: E must be nothrow_move_constructible."
+                    || std::is_nothrow_copy_constructible<ValueType>::value
                      );
     }
 
