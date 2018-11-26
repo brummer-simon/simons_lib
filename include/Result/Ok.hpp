@@ -68,21 +68,20 @@ public:
     explicit Ok(void) noexcept
         : m_value()
     {
-        static_assert( std::is_nothrow_default_constructible<ValueType>::value
-                     , "Ok<T>: T must be nothrow_default_constructible."
-                     );
+        static_assert(std::is_nothrow_default_constructible<ValueType>::value);
     }
 
     /**
      * @brief Constructs a successful Result.
-     * @note Type of @p value must be no-throw move constructible.
+     * @note Type of @p value must be either no-throw-move-construct able
+     *       or no-throw-copy-construct able.
      * @param[in] value   Value contained within the successful result.
      */
-    explicit Ok(ValueType value) noexcept
-        : m_value(std::move(value))
+    explicit Ok(ValueType&& value) noexcept
+        : m_value(std::forward<decltype(value)>(value))
     {
         static_assert( std::is_nothrow_move_constructible<ValueType>::value
-                     , "Ok<T>: T must be nothrow_move_constructible."
+                    || std::is_nothrow_copy_constructible<ValueType>::value
                      );
     }
 
