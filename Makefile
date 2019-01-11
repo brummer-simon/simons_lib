@@ -1,11 +1,42 @@
+# Generic c++ project make template.
+# Author: Simon Brummer <simon.brummer@posteo.de>
 
-# Test config section
-CC = g++
+# --- Global Project settings ---
+PROJECT_NAME     := simons_lib
+PROJECT_TYPE     := headeronly
+PROJECT_CONFIG   := debug
+VERSION_MAJOR    := 0
+VERSION_MINOR    := 1
+VERSION_REVISION := 0
 
-CPPFLAGS = \
-	-std=c++17 \
-	-g \
-	-Iinclude \
+include etc/make/header.mk
+
+# ---Install locations ---
+INSTALL_INC_DIR := /usr/local/include
+
+# --- Sources files ---
+GTEST_SRC := \
+	VersionTest.cpp \
+	CachedCallableTest.cpp \
+	LockGuardTest.cpp \
+	MathTest.cpp \
+	NullTypesTest.cpp \
+	RandomNumberGeneratorTest.cpp \
+	ResultTest.cpp \
+	main.cpp
+
+# --- Compiler settings ---
+CC := g++
+
+STD := -std=c++17
+
+INCLUDES := \
+	-I$(INC_DIR)
+
+DEFINES := \
+	$(VERSION_DEFINES)
+
+WARNINGS := \
 	-Wall \
 	-Wextra \
 	-Wpedantic \
@@ -14,35 +45,26 @@ CPPFLAGS = \
 	-Wstrict-overflow=5 \
 	-fstrict-overflow \
 	-Wsign-compare \
-	-Wconversion\
+	-Wconversion
 
-LDFLAGS = \
-	-lpthread \
+CPPFLAGS := \
+
+CPPFLAGS_GTEST := \
+	-Og \
+	-ggdb
+
+# --- Linker settings ---
+LDFLAGS := \
+
+LDFLAGS_GTEST := \
+
+# --- Library settings ---
+LIBS_GTEST := \
 	-lgtest \
+	-lpthread
 
-TEST_SRC = \
-	test/main.cpp \
-	test/LockGuardTest.cpp \
-	test/NullTypesTest.cpp \
-	test/CachedCallableTest.cpp \
-	test/RandomNumberGeneratorTest.cpp \
-	test/MathTest.cpp \
-	test/ResultTest.cpp \
+# --- Execution Arguments ---
+TEST_ARGS := \
 
-TEST_BIN = test/test_bin.out
-
-# Documentation config section
-CLEAN_DOC = rm -rf doc/html
-MAKE_DOC  = doxygen doc/doxygen_cfg
-
-# Targets
-.PHONY: test doc all
-
-test:
-	$(CC) $(CPPFLAGS) $(TEST_SRC) $(LDFLAGS) -o $(TEST_BIN)
-	$(TEST_BIN)
-
-doc:
-	$(CLEAN_DOC)
-	$(MAKE_DOC)
-
+# Include actual make targets
+include etc/make/targets.mk
