@@ -23,6 +23,7 @@ GTEST_SRC := \
 	NullTypesTest.cpp \
 	RandomNumberGeneratorTest.cpp \
 	ResultTest.cpp \
+	RingbufferTest.cpp \
 	main.cpp
 
 # --- Compiler settings ---
