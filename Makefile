@@ -6,7 +6,7 @@ PROJECT_NAME     := simons_lib
 PROJECT_TYPE     := headeronly
 PROJECT_CONFIG   := debug
 VERSION_MAJOR    := 0
-VERSION_MINOR    := 1
+VERSION_MINOR    := 2
 VERSION_REVISION := 0
 
 include etc/make/header.mk
@@ -23,6 +23,7 @@ GTEST_SRC := \
 	NullTypesTest.cpp \
 	RandomNumberGeneratorTest.cpp \
 	ResultTest.cpp \
+	StackTest.cpp \
 	main.cpp
 
 # --- Compiler settings ---

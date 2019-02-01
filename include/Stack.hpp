@@ -1,8 +1,8 @@
 /**
- * @file      Version.hpp
+ * @file      Stack.hpp
  * @author    Simon Brummer (<simon.brummer@posteo.de>)
- * @brief     Version information.
- * @copyright 2018 Simon Brummer. All rights reserved.
+ * @brief     Stack: Generic fixed-size Stack. Thread safety is configurable.
+ * @copyright 2018 Simon Brummer. All rights reserved.\n
  *            This project is released under the BSD 3-Clause License.
  */
 
@@ -38,23 +38,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VERSION_HPP_20190111084821
-#define VERSION_HPP_20190111084821
+#ifndef STACK_HPP_20181121104928
+#define STACK_HPP_20181121104928
 
-namespace simons_lib
-{
+#include "Stack/StackImpl.hpp"
+#include "Stack/StackError.hpp"
 
-/**
- * @brief Version information.
- */
-struct Version
-{
-    static constexpr char const * const major = "0";     ///< Major Version number.
-    static constexpr char const * const minor = "2";     ///< Minor Version number.
-    static constexpr char const * const rev   = "0";     ///< Revision number.
-    static constexpr char const * const full  = "0.2.0"; ///< Full version number.
-};
-
-} // namespace simons_lib
-
-#endif // VERSION_HPP_20190111084821
+#endif // STACK_HPP_20181121104928
